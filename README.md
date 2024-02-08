@@ -12,7 +12,7 @@ install.packages('qemu') - quick emulator, built on top of 'quantregForest' pack
 
 1. Build the emulator
    jointemu_svd.R
-   Processes the simulation data and builds emulators for the entire time series. Runs leave-one-out cross validation (LOOCV) on a subset of the data, and creates main effects (MEFF) plots. ** At the moment, the LOOCV and MEFF plots are for the raw emulator output, giving *r* plots. Later editions of this will calculate LOOCV and MEFF for the transformed output, for the years 2100, 2200 and 2300.**
+   Processes the simulation data and builds emulators for the entire time series. Runs leave-one-out cross validation (LOOCV) on a subset of the data, and creates main effects (MEFF) plots. **At the moment, the LOOCV and MEFF plots are for the raw emulator output, giving *r* plots. Later editions of this will calculate LOOCV and MEFF for the transformed output, for the years 2100, 2200 and 2300.**
 
 2. Predict distirbutions for 5 SSPs
    predictemu_svd.R
