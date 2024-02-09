@@ -33,3 +33,7 @@ install.packages('qemu') - quick emulator, built on top of 'quantregForest' pack
    + SLE at 2300 vs model parameters
    + Density plots of SLE at 2300 for each SSP, with [5, 95]% quantiles marked
    + Histograms of SLE at 2300 for each SSP
+
+How to cite this material:
+10.5281/zenodo.10639736
+
