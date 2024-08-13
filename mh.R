@@ -4,7 +4,6 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
   # obs = the observations to be used in the likelihood calculation
   # obs_sig = the observational error
   # fac = the factor we use to calculate model error, assuming mod_sig = fac*obs_sig
-  # scenario = the SSP we use to force the projection
   # step_size = the size of the noise component used to generate new states
   # chain_length = length of markov chain we wish to sample
   # burn_in = number of samples we remove from beginning of chain
