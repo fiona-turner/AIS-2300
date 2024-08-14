@@ -2,3 +2,4 @@ FAIR_data/*
 README.txt
 *.csv
 qemu/*
+*.DS_Store
