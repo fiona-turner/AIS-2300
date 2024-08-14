@@ -267,12 +267,14 @@ colnames(distn245) <- paste("y", years, sep = "")
 colnames(distn370) <- paste("y", years, sep = "")
 colnames(distn585) <- paste("y", years, sep = "")
 
+if (write_outputs_to_csv){
 
 write.csv(distn119, "Distributions/distn119.csv", row.names = FALSE)
 write.csv(distn126, "Distributions/distn126.csv", row.names = FALSE)
 write.csv(distn245, "Distributions/distn245.csv", row.names = FALSE)
 write.csv(distn370, "Distributions/distn370.csv", row.names = FALSE)
 write.csv(distn585, "Distributions/distn585.csv", row.names = FALSE)
+}
 
 
 quantile(distn119[,70], c(0.05, 0.167, 0.5, 0.833, 0.95))
@@ -294,11 +296,12 @@ colnames(quant245) <- paste("y", years, sep = "")
 colnames(quant370) <- paste("y", years, sep = "")
 colnames(quant585) <- paste("y", years, sep = "")
 
-
+if (write_outputs_to_csv){
 write.csv(quant119, "Distributions/quant119.csv", row.names = TRUE)
 write.csv(quant126, "Distributions/quant126.csv", row.names = TRUE)
 write.csv(quant245, "Distributions/quant245.csv", row.names = TRUE)
 write.csv(quant370, "Distributions/quant370.csv", row.names = TRUE)
 write.csv(quant585, "Distributions/quant585.csv", row.names = TRUE)
+}
 
 

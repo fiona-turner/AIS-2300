@@ -1,4 +1,5 @@
-setwd("~/Documents/Emulators/qemu/")
+## load all packages
+source("./shared.R")
 
 ## set threshold for svd
 thresh <- 0.999
@@ -12,6 +13,8 @@ source("loocvandmeff.R")
 save_pred <- FALSE
 ## use updated FAIR GSAT values?
 FAIR2 <- FALSE
+## write quantiles to cscv?
+write_outputs_to_csv <- FALSE
 source("predictemu_svd.R")
 
 ## save plots?

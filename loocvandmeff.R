@@ -1,6 +1,4 @@
 ############################# LOOCV #################################
-
-
 LOO_moments <- function(emu, subset = "all") {
   
   stopifnot(inherits(emu, "qemu"))
