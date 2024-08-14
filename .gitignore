@@ -3,3 +3,4 @@ README.txt
 *.csv
 qemu/*
 *.DS_Store
+calibration-data/*
