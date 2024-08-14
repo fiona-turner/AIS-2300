@@ -1,14 +1,11 @@
-library(data.table)
-library(qemu)
-
 options(mc.cores = 4L)
 par(mfrow = c(1, 1))
 
 ### load the raw data and process
 
-fpath <- "~/Documents/Emulators/Data/"
-SLE <- fread(file.path(fpath, "SLE_SIMULATIONS_AIS_final_230725.csv"))
-FOR <- fread(file.path(fpath, "CLIMATE_FORCING_240127.csv"))
+fpath <- "./"
+SLE <- fread(file.path(fpath, "SLE_SIMULATIONS_AIS_final_230725.csv")) #data on the simulations, 22 columns of metadata, followed by 351 years of model output yearly from 1950 to 2300. 2200 simulations in total.
+FOR <- fread(file.path(fpath, "CLIMATE_FORCING_240127.csv")) #data on the GCMS, size 86 x 456. First five columns are metadata, then 450 year observations of temperature. 86 GCMs in total.
 
 ## identify factors and levels
 
@@ -78,7 +75,7 @@ for (i in 1:length(Z[SLE$scenario == 'SSP126',])){
 legend("topleft", legend=c("SSP1-2.6", "SSP5-8.5"),
        text.col=c(rgb(29, 51, 84, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)), cex=1.1, bty = "n")
 
-dev.print(pdf, width = 11.69, height = 8.27, "../Data/AIS/SLE_time.png")  
+#dev.print(pdf, width = 11.69, height = 8.27, "../Data/AIS/SLE_time.png")  
 
 
 

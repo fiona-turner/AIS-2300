@@ -19,7 +19,7 @@ if(FAIR2){
   tmp <- FORpred[scenario == 'ssp119'] 
  } else {
   ## or IPCC FAIR data
-  fpath <- "~/Documents/Emulators/Data/"
+  fpath <- "."
   FORpred <- fread(file.path(fpath, "CLIMATE_FORCING_IPCC_AR6_230706.csv"))
   FORpred$ystart <- rowMeans(subset(FORpred,select=y2015:y2044))
   FORpred$yend <- rowMeans(subset(FORpred,select=y2271:y2300))
