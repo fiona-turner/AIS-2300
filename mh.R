@@ -11,7 +11,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
   #get a GSAT value according to scenario
   if(FAIR2){
     ## load new FAIR data
-    f2path = '~/Documents/Emulators/Data/FAIR_data/'
+    f2path = './FAIR_data/'
     ssp <- c("ssp119", "ssp126", "ssp245", "ssp370", "ssp585")
     FORpred = NULL
     for( s in ssp){
@@ -29,7 +29,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
     #tmp <- FORpred[scenario == scenario] 
   } else {
     ## or IPCC FAIR data
-    fpath <- "~/Documents/Emulators/Data/"
+    fpath <- "./"
     FORpred <- fread(file.path(fpath, "CLIMATE_FORCING_IPCC_AR6_230706.csv"))
     FORpred$ystart <- rowMeans(subset(FORpred,select=y2015:y2044))
     FORpred$yend <- rowMeans(subset(FORpred,select=y2271:y2300))

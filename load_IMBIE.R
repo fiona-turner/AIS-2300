@@ -5,7 +5,7 @@
 ## MEAN(mb_sigma[ok_time])/SQRT(delta_years) = 88 / 2.2 = 40
 
 
-IMBIE <- fread("/Users/fionaturner/Documents/Emulators/Data-to-calibrate/IMBIE/2022/imbie_antarctica_2022_Gt.csv")
+IMBIE <- fread("./calibration-data/IMBIE/2022/imbie_antarctica_2022_Gt.csv")
 
 ## set relative to 2000 to match our model
 IMBIE$`Mass balance (Gt/yr)` <- IMBIE$`Mass balance (Gt/yr)` - mean(IMBIE$`Mass balance (Gt/yr)`[IMBIE$Year >= 2000 & IMBIE$Year < 2001])
