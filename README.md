@@ -64,13 +64,25 @@ install.packages(qemu.tar.gz, repos = NULL, type =‘‘source’’) - quick em
 
    Uses Gibbs sampling to perform MCMC, creating posterior distributions of the parameters.
 
-After running these, we then build projections from the MCMC output.
+After running these, we then build projections from the MCMC output and plot results.
 
 9. Build SLE projections using posterior distributions of parameters.
 
    mh_projections.R
 
    Samples from FAIR for GSAT values, and using posterior samples from MCMC to build SLE projections.
+
+10. Plot prior/posterior distributions
+    
+    mh_density.R
+
+    Plot the prior and posterior distributions of the model parameters
+
+11. Projections plot
+
+    all_pred_plot.R
+
+    Plot time series of the uncalibrated projections, the projections calibrated with MCMC, and the calibrated values to 2100.
 
 How to cite this material:
 10.5281/zenodo.10639736
