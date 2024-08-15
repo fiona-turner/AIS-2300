@@ -28,54 +28,63 @@ if(FAIR2){
 }
 
 
-GSAT_2300 <- sample(tmp$GSAT_2300, 5000, TRUE)
+GSAT_2300 <- sample(tmp$GSAT_2300, s, TRUE)
 GSAT_119 <- GSAT_2300
-simoc <- sample(X$simoc, length(GSAT_2300), TRUE)
-init_atmos <- sample(X$init_atmos, length(GSAT_2300), TRUE)
 lapse_rate <- runif(length(GSAT_2300), -12, -5)
 refreeze <- runif(length(GSAT_2300), 0, 15)
 refreeze_frac <- runif(length(GSAT_2300), 0.2, 0.8)
 PDD_ice <- runif(length(GSAT_2300), 4, 12)
 PDD_snow <- runif(length(GSAT_2300), 0, 6)
-melt_param <- sample(X$melt_param, length(GSAT_2300), TRUE)
 
-heat_flux_Burgard <- runif(length(GSAT_2300), 1*10**-4, 10*10**-4)
-heat_flux_ISMIP6_nonlocal <- runif(length(GSAT_2300), 1*10**4, 4*10**4)
-heat_flux_ISMIP6_nonlocal_slope <- runif(length(GSAT_2300), 1*10**6, 4*10**6)
-heat_flux_PICO <- runif(length(GSAT_2300), 0.1*10**-5, 10*10**-5)
-heat_flux_Plume <- runif(length(GSAT_2300), 1*10**-4, 10*10**-4)
+if (equal_samp){
+  simoc <- sample(unique(X$simoc), length(GSAT_2300), TRUE)
+  init_atmos <- sample(unique(X$init_atmos), length(GSAT_2300), TRUE)
+  melt_param <- sample(unique(X$melt_param), length(GSAT_2300), TRUE)
+} else{
+  simoc <- sample(X$simoc, length(GSAT_2300), TRUE)
+  init_atmos <- sample(X$init_atmos, length(GSAT_2300), TRUE)
+  melt_param <- sample(X$melt_param, length(GSAT_2300), TRUE)
+}
 
-#heat_flux_Burgard <- rep(0, length(GSAT_2300))
-#heat_flux_ISMIP6_nonlocal <- rep(0, length(GSAT_2300))
-#heat_flux_ISMIP6_nonlocal_slope <- rep(0, length(GSAT_2300))
-#heat_flux_PICO <- rep(0, length(GSAT_2300))
-#heat_flux_Plume <- rep(0, length(GSAT_2300))
+if (nest_flux){
+  heat_flux_Burgard <- rep(0, length(GSAT_2300))
+  heat_flux_ISMIP6_nonlocal <- rep(0, length(GSAT_2300))
+  heat_flux_ISMIP6_nonlocal_slope <- rep(0, length(GSAT_2300))
+  heat_flux_PICO <- rep(0, length(GSAT_2300))
+  heat_flux_Plume <- rep(0, length(GSAT_2300))
+  
+  for (i in 1:length(melt_param)){
+    if (as.character(melt_param[i]) == "Burgard"){
+      heat_flux_Burgard[i] = runif(1, 1*10**-4, 10*10**-4)
+    } 
+    else{ heat_flux_Burgard[i] = 5*10**-4}
+    if (as.character(melt_param[i]) == "ISMIP6_nonlocal"){
+      heat_flux_ISMIP6_nonlocal[i] = runif(1, 1*10**4, 4*10**4)
+    } 
+    else{ heat_flux_ISMIP6_nonlocal[i] = 1.45*10**4}
+    if (as.character(melt_param[i]) == "ISMIP6_nonlocal_slope"){
+      heat_flux_ISMIP6_nonlocal_slope[i] = runif(1, 1*10**6, 4*10**6)
+    } 
+    else{ heat_flux_ISMIP6_nonlocal_slope[i] = 2.06*10**6}
+    if (as.character(melt_param[i]) == "PICO"){
+        heat_flux_PICO[i] = runif(1, 0.1*10**-5, 10*10**-5)
+    } 
+    else if (as.character(melt_param[i]) != "PICO" & as.character(simoc[i]) == "PISM_Reese"){
+      heat_flux_PICO[i] = 7*10**-5}
+    else {heat_flux_PICO[i] = 4*10**-5}
+    if (as.character(melt_param[i]) == "Plume"){
+      heat_flux_Plume[i] = runif(1, 1*10**-4, 10*10**-4)
+    } 
+    else{ heat_flux_Plume[i] = 5.9*10**-4}
+  }  
+} else{
+  heat_flux_Burgard <- runif(length(GSAT_2300), 1*10**-4, 10*10**-4)
+  heat_flux_ISMIP6_nonlocal <- runif(length(GSAT_2300), 1*10**4, 4*10**4)
+  heat_flux_ISMIP6_nonlocal_slope <- runif(length(GSAT_2300), 1*10**6, 4*10**6)
+  heat_flux_PICO <- runif(length(GSAT_2300), 0.1*10**-5, 10*10**-5)
+  heat_flux_Plume <- runif(length(GSAT_2300), 1*10**-4, 10*10**-4)
+}
 
-
-#for (i in 1:length(melt_param)){
-#  if (as.character(melt_param[i]) == "Burgard"){
-#    heat_flux_Burgard[i] = runif(1, 1*10**-4, 10*10**-4)
-#  } 
-#  else{ heat_flux_Burgard[i] = 5*10**-4}
-#  if (as.character(melt_param[i]) == "ISMIP6_nonlocal"){
-#    heat_flux_ISMIP6_nonlocal[i] = runif(1, 1*10**4, 4*10**4)
-#  } 
-#  else{ heat_flux_ISMIP6_nonlocal[i] = 1.45*10**4}
-#  if (as.character(melt_param[i]) == "ISMIP6_nonlocal_slope"){
-#    heat_flux_ISMIP6_nonlocal_slope[i] = runif(1, 1*10**6, 4*10**6)
-#  } 
-#  else{ heat_flux_ISMIP6_nonlocal_slope[i] = 2.06*10**6}
-#  if (as.character(melt_param[i]) == "PICO"){
-#      heat_flux_PICO[i] = runif(1, 0.1*10**-5, 10*10**-5)
-#  } 
-#  else if (as.character(melt_param[i]) != "PICO" & as.character(simoc[i]) == "PISM_Reese"){
-#    heat_flux_PICO[i] = 7*10**-5}
-#  else {heat_flux_PICO[i] = 4*10**-5}
-#  if (as.character(melt_param[i]) == "Plume"){
-#    heat_flux_Plume[i] = runif(1, 1*10**-4, 10*10**-4)
-#  } 
-#  else{ heat_flux_Plume[i] = 5.9*10**-4}
-#}
 
 
 message("** SSP119")
@@ -267,12 +276,13 @@ colnames(distn245) <- paste("y", years, sep = "")
 colnames(distn370) <- paste("y", years, sep = "")
 colnames(distn585) <- paste("y", years, sep = "")
 
-
-write.csv(distn119, "Distributions/distn119.csv", row.names = FALSE)
-write.csv(distn126, "Distributions/distn126.csv", row.names = FALSE)
-write.csv(distn245, "Distributions/distn245.csv", row.names = FALSE)
-write.csv(distn370, "Distributions/distn370.csv", row.names = FALSE)
-write.csv(distn585, "Distributions/distn585.csv", row.names = FALSE)
+if (save_pred){
+  write.csv(distn119, "Distributions/distn119.csv", row.names = FALSE)
+  write.csv(distn126, "Distributions/distn126.csv", row.names = FALSE)
+  write.csv(distn245, "Distributions/distn245.csv", row.names = FALSE)
+  write.csv(distn370, "Distributions/distn370.csv", row.names = FALSE)
+  write.csv(distn585, "Distributions/distn585.csv", row.names = FALSE) 
+}
 
 
 quantile(distn119[,70], c(0.05, 0.167, 0.5, 0.833, 0.95))
@@ -294,11 +304,13 @@ colnames(quant245) <- paste("y", years, sep = "")
 colnames(quant370) <- paste("y", years, sep = "")
 colnames(quant585) <- paste("y", years, sep = "")
 
+if(save_pred){
+  write.csv(quant119, "Distributions/quant119.csv", row.names = TRUE)
+  write.csv(quant126, "Distributions/quant126.csv", row.names = TRUE)
+  write.csv(quant245, "Distributions/quant245.csv", row.names = TRUE)
+  write.csv(quant370, "Distributions/quant370.csv", row.names = TRUE)
+  write.csv(quant585, "Distributions/quant585.csv", row.names = TRUE)  
+}
 
-write.csv(quant119, "Distributions/quant119.csv", row.names = TRUE)
-write.csv(quant126, "Distributions/quant126.csv", row.names = TRUE)
-write.csv(quant245, "Distributions/quant245.csv", row.names = TRUE)
-write.csv(quant370, "Distributions/quant370.csv", row.names = TRUE)
-write.csv(quant585, "Distributions/quant585.csv", row.names = TRUE)
 
 

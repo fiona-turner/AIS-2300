@@ -151,6 +151,7 @@ if (save_pred){
   write.csv(mh_quant585, "Distributions/mh_quant585.csv", row.names = TRUE)
 }
 
+dev.off()
 
 layout_mat <- matrix(c(1:3), nrow = 1, ncol = 3,
                      byrow = TRUE)
@@ -210,3 +211,4 @@ legend(-5, 0.39, legend=as.expression(bquote(bold("c"))),
        text.col=rgb(0, 0, 0, maxColorValue = 255), cex=1.5, bty = "n")
 
 dev.print(pdf, width = 11.69, height = 8.27, "Multi_year_plots/mh_projections.pdf") 
+

@@ -7,7 +7,7 @@ par(mfrow = c(1, 1))
 ### load the raw data and process
 
 fpath <- "~/Documents/Emulators/Data/"
-SLE <- fread(file.path(fpath, "SLE_SIMULATIONS_AIS_final_230725.csv"))
+SLE <- fread(file.path(fpath, "SLE_SIMULATIONS_AIS_full_ZWALLY00_240306.csv"))
 FOR <- fread(file.path(fpath, "CLIMATE_FORCING_240127.csv"))
 
 ## identify factors and levels
@@ -49,7 +49,7 @@ ycols <- grep("^y[[:digit:]]{4}", names(SLE), value = TRUE)
 
 #set SLE respective to 2000
 #then create 5 year averages
-SLE[,23:373] <- sweep(SLE[,23:373], 1, SLE$y2000)
+SLE[, (ycols) := lapply(.SD, function(x) x - SLE$y2000), .SDcols = ycols]
 Z <- data.frame(SLE[, ycols, with=FALSE])
 
 fence <- 1900 + c(50, seq(from = 55, to = 400, by = 5))
@@ -69,10 +69,10 @@ abline(v = 2000, lwd = 0.5)
 abline(h = 0, lwd = 0.5)
 
 for (i in 1:length(Z[SLE$scenario == 'SSP585',])){
-  lines(yy, SLE[SLE$scenario == 'SSP585'][i,23:373], col = rgb(132, 11, 34, maxColorValue = 255, alpha = 100), lwd = 2)
+  lines(yy, SLE[SLE$scenario == 'SSP585'][i,32:382], col = rgb(132, 11, 34, maxColorValue = 255, alpha = 100), lwd = 2)
 }
 for (i in 1:length(Z[SLE$scenario == 'SSP126',])){
-  lines(yy, SLE[SLE$scenario == 'SSP126'][i,23:373], col = rgb(29, 51, 84, maxColorValue = 255, alpha = 100), lwd = 2)
+  lines(yy, SLE[SLE$scenario == 'SSP126'][i,32:382], col = rgb(29, 51, 84, maxColorValue = 255, alpha = 100), lwd = 2)
 }
 
 legend("topleft", legend=c("SSP1-2.6", "SSP5-8.5"),

@@ -1,5 +1,3 @@
-
-
 mod_119 <- matrix(0, nrow = length(obs), ncol = nrow(SLE119_meanx))  # initialize mod matrix
 mod_126 <- matrix(0, nrow = length(obs), ncol = nrow(SLE126_meanx))
 mod_245 <- matrix(0, nrow = length(obs), ncol = nrow(SLE245_meanx))
@@ -27,11 +25,11 @@ s_370 <- rep(0, nrow(distn370))
 s_585 <- rep(0, nrow(distn585))
 
 for (i in 1:nrow(distn119)) {
-  s_119[i] <- exp(-0.5 * sum(((mod_119[, i] - obs)^2) / var))
-  s_126[i] <- exp(-0.5 * sum(((mod_126[, i] - obs)^2) / var))
-  s_245[i] <- exp(-0.5 * sum(((mod_245[, i] - obs)^2) / var))
-  s_370[i] <- exp(-0.5 * sum(((mod_370[, i] - obs)^2) / var))
-  s_585[i] <- exp(-0.5 * sum(((mod_585[, i] - obs)^2) / var))
+  s_119[i] <- exp(-0.5 * sum(((mod_119[, i] - obs)^2) / (var + diag(SLE119_varx[i,,])[6:13])))
+  s_126[i] <- exp(-0.5 * sum(((mod_126[, i] - obs)^2) / (var + diag(SLE126_varx[i,,])[6:13])))
+  s_245[i] <- exp(-0.5 * sum(((mod_245[, i] - obs)^2) / (var + diag(SLE245_varx[i,,])[6:13])))
+  s_370[i] <- exp(-0.5 * sum(((mod_370[, i] - obs)^2) / (var + diag(SLE370_varx[i,,])[6:13])))
+  s_585[i] <- exp(-0.5 * sum(((mod_585[, i] - obs)^2) / (var + diag(SLE585_varx[i,,])[6:13])))
 }
 
 w_119 <- s_119 / sum(s_119)  # normalize scores to get weights
@@ -60,17 +58,6 @@ for( i in 1L:dim(weighted_distn585)[2]){
   weighted_distn119[,i] <- sample(distn119[,i], dim(distn119)[1], replace = TRUE, prob = w_119)
 } 
 
-
-quantile(distn119[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975))
-round(quantile(weighted_distn119[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975)),2)
-quantile(distn126[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975))
-round(quantile(weighted_distn126[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975)),2)
-quantile(distn245[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975))
-round(quantile(weighted_distn245[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975)),2)
-quantile(distn370[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975))
-round(quantile(weighted_distn370[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975)),2)
-quantile(distn585[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975))
-round(quantile(weighted_distn585[,70], c(0.025, 0.05, 0.167, 0.5, 0.833, 0.95, 0.975)),2)
 
 weighted_quant119 <- apply(weighted_distn119, 2, function(x) quantile(x,c(0.025, 0.05, 0.167, 0.25, 0.5, 0.75, 0.833, 0.95, 0.975)))
 weighted_quant126 <- apply(weighted_distn126, 2, function(x) quantile(x,c(0.025, 0.05, 0.167, 0.25, 0.5, 0.75, 0.833, 0.95, 0.975)))
@@ -106,9 +93,9 @@ if (save_pred){
   write.csv(weighted_distn585, "Distributions/weighted_distn585.csv", row.names = FALSE)
 }
 
+dev.off()
 
-
-plot(density(distn585[,70]), col=rgb(132, 11, 34, maxColorValue = 255, alpha = 100), xlab = "SLE at 2300 relative to 2000 (m)", main = " ", ylim=c(0,0.5), lty = 'dashed', lwd = 2, cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(density(distn585[,70]), col=rgb(132, 11, 34, maxColorValue = 255, alpha = 100), xlab = "SLE at 2300 relative to 2000 (m)", main = " ", ylim=c(0,0.4), lty = 'dashed', lwd = 2, cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 lines(density(distn370[,70]), col=rgb(242, 17, 17, maxColorValue = 255, alpha = 100), lty = 'dashed', lwd=2)
 lines(density(distn245[,70]), col=rgb(234, 221, 61, maxColorValue = 255, alpha = 100), lty = 'dashed', lwd = 2)
 lines(density(distn126[,70]), col=rgb(29, 51, 84, maxColorValue = 255, alpha = 100), lty = 'dashed', lwd = 2)
@@ -120,32 +107,6 @@ lines(density(weighted_distn245[,70]), col=rgb(234, 221, 61, maxColorValue = 255
 lines(density(weighted_distn126[,70]), col=rgb(29, 51, 84, maxColorValue = 255), lwd = 2)
 lines(density(weighted_distn119[,70]), col=rgb(30, 150, 132, maxColorValue = 255), lwd = 2)
 
-#abline(v = quantile(weighted_distn585[,70], probs = 0.95), col=rgb(132, 11, 34, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn585[,70], probs = 0.95)+0.28, 0.5, round(quantile(weighted_distn585[,70], probs = 0.95),2), col=rgb(132, 11, 34, maxColorValue = 255))
-#abline(v = quantile(weighted_distn585[,70], probs = 0.05), col=rgb(132, 11, 34, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn585[,70], probs = 0.05)+0.32, 0.5, round(quantile(weighted_distn585[,70], probs = 0.05),2), col=rgb(132, 11, 34, maxColorValue = 255))
-
-#abline(v = quantile(weighted_distn370[,70], probs = 0.95), col=rgb(242, 17, 17, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn370[,70], probs = 0.95)+0.2, 0.47, round(quantile(weighted_distn370[,70], probs = 0.95),2), col=rgb(242, 17, 17, maxColorValue = 255))
-#abline(v = quantile(weighted_distn370[,70], probs = 0.05), col=rgb(242, 17, 17, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn370[,70], probs = 0.05)+0.28, 0.47, round(quantile(weighted_distn370[,70], probs = 0.05),2), col=rgb(242, 17, 17, maxColorValue = 255))
-
-#abline(v = quantile(weighted_distn245[,70], probs = 0.95), col=rgb(234, 221, 61, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn245[,70], probs = 0.95)+0.28, 0.5, round(quantile(weighted_distn245[,70], probs = 0.95),2), col=rgb(234, 221, 61, maxColorValue = 255))
-#abline(v = quantile(weighted_distn245[,70], probs = 0.05), col=rgb(234, 221, 61, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn245[,70], probs = 0.05)+0.28, 0.5, round(quantile(weighted_distn245[,70], probs = 0.05),2), col=rgb(234, 221, 61, maxColorValue = 255))
-
-#abline(v = quantile(weighted_distn126[,70], probs = 0.95), col=rgb(29, 51, 84, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn126[,70], probs = 0.95)+0.28, 0.47, round(quantile(weighted_distn126[,70], probs = 0.95),2), col=rgb(29, 51, 84, maxColorValue = 255))
-#abline(v = quantile(weighted_distn126[,70], probs = 0.05), col=rgb(29, 51, 84, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn126[,70], probs = 0.05)+0.29, 0.47, round(quantile(weighted_distn126[,70], probs = 0.05),2), col=rgb(29, 51, 84, maxColorValue = 255))
-
-#abline(v = quantile(weighted_distn119[,70], probs = 0.95), col=rgb(30, 150, 132, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn119[,70], probs = 0.95)-0.3, 0.5, round(quantile(weighted_distn119[,70], probs = 0.95),2), col=rgb(30, 150, 132, maxColorValue = 255))
-#abline(v = quantile(weighted_distn119[,70], probs = 0.05), col=rgb(30, 150, 132, maxColorValue = 255), lty = 2)
-#text(quantile(weighted_distn119[,70], probs = 0.05)-0.3, 0.5, round(quantile(weighted_distn119[,70], probs = 0.05),2), col=rgb(30, 150, 132, maxColorValue = 255))
-
-
 legend("topright", legend=c("SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"),
        text.col=c(rgb(30, 150, 132, maxColorValue = 255), rgb(29, 51, 84, maxColorValue = 255), rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)), cex=1.1, bty = "n")
 if (save_plot){
@@ -155,77 +116,16 @@ if (save_plot){
 
 
 
-layout_mat <- matrix(c(1, 2), nrow = 1, ncol = 2,
+layout_mat <- matrix(c(1:3), nrow = 1, ncol = 3,
                      byrow = TRUE)
 
 my_lay <- layout(mat = layout_mat, 
-                 heights = c(1, 1),
-                 widths = c(3, 0.5), respect =TRUE)
+                 heights = c(1, 1, 1),
+                 widths = c(3, 0.5, 0.5), respect =TRUE)
 
+par(mar = c(5.1, 4.1, 0.1, 0.1))
 
-par(mar = c(5.1, 4.1, 0, 0))
-plot(0,0,xlim = c(1955,2300),ylim = c(-1,5),type = "n", xlab = "Year", ylab = paste("SLE (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
-abline(v = 2000, lwd = 0.5)
-abline(h = 0, lwd = 0.5)
-
-
-lines(years, apply(distn585, 2, function(x) quantile(x,0.5)), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn585, 2, function(x) quantile(x,0.05)), rev(apply(distn585, 2, function(x) quantile(x,0.95)))), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 20), border = NA)
-
-lines(years, apply(weighted_distn585, 2, function(x) quantile(x,0.5)), col = rgb(132, 11, 34, maxColorValue = 255), lwd = 2)
-polygon(c(years, rev(years)), c(apply(weighted_distn585, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn585, 2, function(x) quantile(x,0.95)))), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 51), border = NA)
-
-
-lines(years, apply(distn370, 2, function(x) quantile(x,0.5)), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn370, 2, function(x) quantile(x,0.05)), rev(apply(distn370, 2, function(x) quantile(x,0.95)))), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 20), border = NA)
-
-lines(years, apply(weighted_distn370, 2, function(x) quantile(x,0.5)), col = rgb(242, 17, 17, maxColorValue = 255), lwd = 2)
-polygon(c(years, rev(years)), c(apply(weighted_distn370, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn370, 2, function(x) quantile(x,0.95)))), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 51), border = NA)
-
-
-lines(years, apply(distn245, 2, function(x) quantile(x,0.5)), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn245, 2, function(x) quantile(x,0.05)), rev(apply(distn245, 2, function(x) quantile(x,0.95)))), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 20), border = NA)
-
-lines(years, apply(weighted_distn245, 2, function(x) quantile(x,0.5)), col = rgb(234, 221, 61, maxColorValue = 255), lwd = 2)
-polygon(c(years, rev(years)), c(apply(weighted_distn245, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn245, 2, function(x) quantile(x,0.95)))), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 51), border = NA)
-
-
-lines(years, apply(distn126, 2, function(x) quantile(x,0.5)), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn126, 2, function(x) quantile(x,0.05)), rev(apply(distn126, 2, function(x) quantile(x,0.95)))), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 20), border = NA)
-
-lines(years, apply(weighted_distn126, 2, function(x) quantile(x,0.5)), col = rgb(29, 51, 84, maxColorValue = 255), lwd = 2)
-polygon(c(years, rev(years)), c(apply(weighted_distn126, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn126, 2, function(x) quantile(x,0.95)))), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 51), border = NA)
-
-
-lines(years, apply(distn119, 2, function(x) quantile(x,0.5)), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn119, 2, function(x) quantile(x,0.05)), rev(apply(distn119, 2, function(x) quantile(x,0.95)))), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 20), border = NA)
-
-lines(years, apply(weighted_distn119, 2, function(x) quantile(x,0.5)), col = rgb(30, 150, 132, maxColorValue = 255), lwd = 2)
-polygon(c(years, rev(years)), c(apply(weighted_distn119, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn119, 2, function(x) quantile(x,0.95)))), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 51), border = NA)
-
-legend("topleft", legend=c("SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"),
-       text.col=c(rgb(30, 150, 132, maxColorValue = 255), rgb(29, 51, 84, maxColorValue = 255), rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)), cex=1.1, bty = "n")
-
-par(mar = c(5.1, 0, 0, 0))
-
-boxplot(cbind(weighted_quant119[c(2,3,5,7,8),70],weighted_quant126[c(2,3,5,7,8),70],weighted_quant245[c(2,3,5,7,8),70],weighted_quant370[c(2,3,5,7,8),70],weighted_quant585[c(2,3,5,7,8),70]), frame = FALSE, axes = FALSE,  col=c(rgb(30, 150, 132, maxColorValue = 255, alpha = 153),rgb(29, 51, 84, maxColorValue = 255),rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)),ylim = c(-1,5))
-
-dev.print(pdf, width = 11.69, height = 8.27, "Multi_year_plots/weighted_predictions_bplots.pdf")  
-
-par(mfrow = c(1,1))
-
-
-
-layout_mat <- matrix(c(1, 2), nrow = 1, ncol = 2,
-                     byrow = TRUE)
-
-my_lay <- layout(mat = layout_mat, 
-                 heights = c(1, 1),
-                 widths = c(3, 0.5), respect =TRUE)
-
-
-par(mar = c(5.1, 4.1, 0, 0))
-plot(0,0,xlim = c(1955,2100),ylim = c(-0.5,0.5),type = "n", xlab = "Year", ylab = paste("SLE (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(0,0,xlim = c(1955,2300),ylim = c(-2,6),type = "n", xlab = "Year", ylab = paste("SLE (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 abline(v = 2000, lwd = 0.5)
 abline(h = 0, lwd = 0.5)
 
@@ -267,53 +167,83 @@ polygon(c(years, rev(years)), c(apply(weighted_distn119, 2, function(x) quantile
 legend("topleft", legend=c("SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"),
        text.col=c(rgb(30, 150, 132, maxColorValue = 255), rgb(29, 51, 84, maxColorValue = 255), rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)), cex=0.7, bty = "n")
 
-par(mar = c(5.1, 0, 0, 0))
+par(mar = c(5.1, 0.1, 0.1, 0.1))
 
-boxplot(cbind(weighted_quant119[c(2,3,5,7,8),30],weighted_quant126[c(2,3,5,7,8),30],weighted_quant245[c(2,3,5,7,8),30],weighted_quant370[c(2,3,5,7,8),30],weighted_quant585[c(2,3,5,7,8),30]), frame = FALSE, axes = FALSE,  col=c(rgb(30, 150, 132, maxColorValue = 255, alpha = 153),rgb(29, 51, 84, maxColorValue = 255),rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)),ylim = c(-0.5,0.5))
+boxplot(cbind(weighted_quant119[c(2,3,5,7,8),70],weighted_quant126[c(2,3,5,7,8),70],weighted_quant245[c(2,3,5,7,8),70],weighted_quant370[c(2,3,5,7,8),70],weighted_quant585[c(2,3,5,7,8),70]), frame = FALSE, axes = FALSE,  col=c(rgb(30, 150, 132, maxColorValue = 255, alpha = 153),rgb(29, 51, 84, maxColorValue = 255),rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)),ylim = c(-2,6))
+
+par(mar = c(5.1, 0.1, 0.1, 0.1))
+plot(density(weighted_distn585[,70]), col=rgb(132, 11, 34, maxColorValue = 255), xlab = "SLE (m)", main = " ", ylim=c(0,0.4), lwd = 2, cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5, frame = FALSE, yaxt='n')
+lines(density(weighted_distn370[,70]), col=rgb(242, 17, 17, maxColorValue = 255), lwd=2)
+lines(density(weighted_distn245[,70]), col=rgb(234, 221, 61, maxColorValue = 255), lwd = 2)
+lines(density(weighted_distn126[,70]), col=rgb(29, 51, 84, maxColorValue = 255), lwd = 2)
+lines(density(weighted_distn119[,70]), col=rgb(30, 150, 132, maxColorValue = 255), lwd = 2)
+
+dev.print(pdf, width = 11.69, height = 8.27, "Multi_year_plots/weighted_predictions.pdf")  
+
+
+
+
+layout_mat <- matrix(c(1:3), nrow = 1, ncol = 3,
+                     byrow = TRUE)
+
+my_lay <- layout(mat = layout_mat, 
+                 heights = c(1, 1, 1),
+                 widths = c(3, 0.5, 0.5), respect =TRUE)
+
+par(mar = c(5.1, 4.1, 0.1, 0.1))
+
+plot(0,0,xlim = c(1955,2100),ylim = c(-0.5,1),type = "n", xlab = "Year", ylab = paste("SLE (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+abline(v = 2000, lwd = 0.5)
+abline(h = 0, lwd = 0.5)
+
+
+lines(years, apply(distn585, 2, function(x) quantile(x,0.5)), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
+#polygon(c(years, rev(years)), c(apply(distn585, 2, function(x) quantile(x,0.05)), rev(apply(distn585, 2, function(x) quantile(x,0.95)))), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 20), border = NA)
+
+lines(years, apply(weighted_distn585, 2, function(x) quantile(x,0.5)), col = rgb(132, 11, 34, maxColorValue = 255), lwd = 2)
+polygon(c(years, rev(years)), c(apply(weighted_distn585, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn585, 2, function(x) quantile(x,0.95)))), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 51), border = NA)
+
+
+lines(years, apply(distn370, 2, function(x) quantile(x,0.5)), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
+#polygon(c(years, rev(years)), c(apply(distn370, 2, function(x) quantile(x,0.05)), rev(apply(distn370, 2, function(x) quantile(x,0.95)))), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 20), border = NA)
+
+lines(years, apply(weighted_distn370, 2, function(x) quantile(x,0.5)), col = rgb(242, 17, 17, maxColorValue = 255), lwd = 2)
+polygon(c(years, rev(years)), c(apply(weighted_distn370, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn370, 2, function(x) quantile(x,0.95)))), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 51), border = NA)
+
+
+lines(years, apply(distn245, 2, function(x) quantile(x,0.5)), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
+#polygon(c(years, rev(years)), c(apply(distn245, 2, function(x) quantile(x,0.05)), rev(apply(distn245, 2, function(x) quantile(x,0.95)))), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 20), border = NA)
+
+lines(years, apply(weighted_distn245, 2, function(x) quantile(x,0.5)), col = rgb(234, 221, 61, maxColorValue = 255), lwd = 2)
+polygon(c(years, rev(years)), c(apply(weighted_distn245, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn245, 2, function(x) quantile(x,0.95)))), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 51), border = NA)
+
+
+lines(years, apply(distn126, 2, function(x) quantile(x,0.5)), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
+#polygon(c(years, rev(years)), c(apply(distn126, 2, function(x) quantile(x,0.05)), rev(apply(distn126, 2, function(x) quantile(x,0.95)))), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 20), border = NA)
+
+lines(years, apply(weighted_distn126, 2, function(x) quantile(x,0.5)), col = rgb(29, 51, 84, maxColorValue = 255), lwd = 2)
+polygon(c(years, rev(years)), c(apply(weighted_distn126, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn126, 2, function(x) quantile(x,0.95)))), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 51), border = NA)
+
+
+lines(years, apply(distn119, 2, function(x) quantile(x,0.5)), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
+#polygon(c(years, rev(years)), c(apply(distn119, 2, function(x) quantile(x,0.05)), rev(apply(distn119, 2, function(x) quantile(x,0.95)))), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 20), border = NA)
+
+lines(years, apply(weighted_distn119, 2, function(x) quantile(x,0.5)), col = rgb(30, 150, 132, maxColorValue = 255), lwd = 2)
+polygon(c(years, rev(years)), c(apply(weighted_distn119, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn119, 2, function(x) quantile(x,0.95)))), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 51), border = NA)
+
+legend("topleft", legend=c("SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"),
+       text.col=c(rgb(30, 150, 132, maxColorValue = 255), rgb(29, 51, 84, maxColorValue = 255), rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)), cex=0.7, bty = "n")
+
+par(mar = c(5.1, 0.1, 0.1, 0.1))
+
+boxplot(cbind(weighted_quant119[c(2,3,5,7,8),30],weighted_quant126[c(2,3,5,7,8),30],weighted_quant245[c(2,3,5,7,8),30],weighted_quant370[c(2,3,5,7,8),30],weighted_quant585[c(2,3,5,7,8),30]), frame = FALSE, axes = FALSE,  col=c(rgb(30, 150, 132, maxColorValue = 255, alpha = 153),rgb(29, 51, 84, maxColorValue = 255),rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)),ylim = c(-0.5,1))
+
+par(mar = c(5.1, 0.1, 0.1, 0.1))
+plot(density(weighted_distn585[,30]), col=rgb(132, 11, 34, maxColorValue = 255), ylim=c(0, 5), xlab = "SLE (m)", main = " ", lwd = 2, cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5, frame = FALSE, yaxt='n')
+lines(density(weighted_distn370[,30]), col=rgb(242, 17, 17, maxColorValue = 255), lwd=2)
+lines(density(weighted_distn245[,30]), col=rgb(234, 221, 61, maxColorValue = 255), lwd = 2)
+lines(density(weighted_distn126[,30]), col=rgb(29, 51, 84, maxColorValue = 255), lwd = 2)
+lines(density(weighted_distn119[,30]), col=rgb(30, 150, 132, maxColorValue = 255), lwd = 2)
 
 dev.print(pdf, width = 11.69, height = 8.27, "Multi_year_plots/weighted_predictions_bplots_2100.pdf")  
 
-
-#plot(0,0,xlim = c(1955,2300),ylim = c(-1,5),type = "n",xlab = "Year", ylab = paste("Sea level contribution relative to 2000 (m SLE)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
-#abline(v = 2000, lwd = 0.5)
-#abline(h = 0, lwd = 0.5)
-
-
-#lines(years, apply(distn585, 2, function(x) quantile(x,0.5)), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn585, 2, function(x) quantile(x,0.05)), rev(apply(distn585, 2, function(x) quantile(x,0.95)))), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 20), border = NA)
-
-#lines(years, apply(weighted_distn585, 2, function(x) quantile(x,0.5)), col = rgb(132, 11, 34, maxColorValue = 255), lwd = 2)
-#polygon(c(years, rev(years)), c(apply(weighted_distn585, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn585, 2, function(x) quantile(x,0.95)))), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 51), border = NA)
-
-
-#lines(years, apply(distn370, 2, function(x) quantile(x,0.5)), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn370, 2, function(x) quantile(x,0.05)), rev(apply(distn370, 2, function(x) quantile(x,0.95)))), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 20), border = NA)
-
-#lines(years, apply(weighted_distn370, 2, function(x) quantile(x,0.5)), col = rgb(242, 17, 17, maxColorValue = 255), lwd = 2)
-#polygon(c(years, rev(years)), c(apply(weighted_distn370, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn370, 2, function(x) quantile(x,0.95)))), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 51), border = NA)
-
-
-#lines(years, apply(distn245, 2, function(x) quantile(x,0.5)), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn245, 2, function(x) quantile(x,0.05)), rev(apply(distn245, 2, function(x) quantile(x,0.95)))), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 20), border = NA)
-
-#lines(years, apply(weighted_distn245, 2, function(x) quantile(x,0.5)), col = rgb(234, 221, 61, maxColorValue = 255), lwd = 2)
-#polygon(c(years, rev(years)), c(apply(weighted_distn245, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn245, 2, function(x) quantile(x,0.95)))), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 51), border = NA)
-
-
-#lines(years, apply(distn126, 2, function(x) quantile(x,0.5)), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn126, 2, function(x) quantile(x,0.05)), rev(apply(distn126, 2, function(x) quantile(x,0.95)))), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 20), border = NA)
-
-#lines(years, apply(weighted_distn126, 2, function(x) quantile(x,0.5)), col = rgb(29, 51, 84, maxColorValue = 255), lwd = 2)
-#polygon(c(years, rev(years)), c(apply(weighted_distn126, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn126, 2, function(x) quantile(x,0.95)))), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 51), border = NA)
-
-
-#lines(years, apply(distn119, 2, function(x) quantile(x,0.5)), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 180), lty = 'dashed', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn119, 2, function(x) quantile(x,0.05)), rev(apply(distn119, 2, function(x) quantile(x,0.95)))), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 20), border = NA)
-
-#lines(years, apply(weighted_distn119, 2, function(x) quantile(x,0.5)), col = rgb(30, 150, 132, maxColorValue = 255), lwd = 2)
-#polygon(c(years, rev(years)), c(apply(weighted_distn119, 2, function(x) quantile(x,0.05)), rev(apply(weighted_distn119, 2, function(x) quantile(x,0.95)))), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 51), border = NA)
-
-#legend("topleft", legend=c("SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"),
-#       text.col=c(rgb(30, 150, 132, maxColorValue = 255), rgb(29, 51, 84, maxColorValue = 255), rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)), cex=1.1, bty = "n")
-
-#dev.print(pdf, width = 11.69, height = 8.27, "Multi_year_plots/weighted_predictions.pdf")  

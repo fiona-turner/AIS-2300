@@ -56,6 +56,7 @@ cv_sdx <- t(sapply(1L:nrow(cv_sd), function(i) {
 }))
 
 rmse <- lapply(1L:n, function(j) { sqrt(mean((cv_meanx[,j] - sim[,j])^2))})
+tau <- lapply(1L:n, function(j) {cor.test(cv_meanx[,j], sim[,j], method="kendall")$estimate})
 
 ## want loocv plots at 2100, 2150, 2200, 2300
 ## time slice index is years[:,c(30, 40, 50, 70)]
@@ -70,7 +71,7 @@ for(t in tidx){
       ylab = paste("Emulated values at ", years[t]," (SLE (m))",sep=""), main = " ", col = col_dots, xlim=c(min(cv_meanx[order(sim[,t]),t] - 2*cv_sdx[order(sim[,t]),t]),max(cv_meanx[order(sim[,t]),t] + 2*cv_sdx[order(sim[,t]),t])), ylim=c(min(cv_meanx[order(sim[,t]),t] - 2*cv_sdx[order(sim[,t]),t]),max(cv_meanx[order(sim[,t]),t] + 2*cv_sdx[order(sim[,t]),t])), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
   arrows(sim[order(sim[,t]),t], cv_meanx[order(sim[,t]),t] - 2*cv_sdx[order(sim[,t]),t], sim[order(sim[,t]),t], cv_meanx[order(sim[,t]),t] + 2*cv_sdx[order(sim[,t]),t], length=0.05, angle=90, code=3, col = col_dots)
   abline(a = 0, b = 1, lwd = 0.5)
-  legend('topleft', legend=c(paste("Coverage: ",100-sum(wrong), "%", sep=""),paste("RMSE:  ", round(as.numeric(rmse[t]),2), "m", sep="")), cex=1.1, bty = "n")
+  legend('topleft', legend=c(paste("Coverage: ",100-sum(wrong), "%", sep=""),paste("RMSE:  ", round(as.numeric(rmse[t]),2), "m", sep=""),paste("Kendall's tau:  ", round(as.numeric(tau[t]),2), sep="")), cex=1.1, bty = "n")
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/svd_qemu_LOO_",years[t],".pdf",sep=""), width=6, height=6)
   }
@@ -100,7 +101,7 @@ message("running meff")
 
 
 ##decide on size of sample and set here
-GSAT_2300_nom <- rep(mean(X$GSAT_2300), 1000)
+GSAT_2300_nom <- rep(6, 1000) #change this to midpoint, perhaps rounded to 6?
 simoc_nom <- rep(unique(X$simoc)[1], length(GSAT_2300_nom))
 init_atmos_nom <- rep(unique(X$init_atmos)[1], length(GSAT_2300_nom))
 lapse_rate_nom <- rep(-8.2, length(GSAT_2300_nom))
@@ -557,7 +558,7 @@ col = hcl.colors(d, palette = "Dark 3")
 
 for(t in tidx){
   #par(mfrow = c(4, 4))
-  plot(0,0,xlim = c(min(GSAT_2300_samp),max(GSAT_2300_samp)), ylim = c(-1,5),type = "n",xlab = "GSAT", ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(GSAT_2300_samp),max(GSAT_2300_samp)), ylim = c(-1,5),type = "n",xlab = "GSAT", ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
   abline(v = 0, lwd = 0.5)
   abline(h = 0, lwd = 0.5)
   lines(GSAT_2300_samp, MEFF_GSAT_meanx[,t], col = col[1], type = 'l', lwd = 2)
@@ -570,7 +571,8 @@ for(t in tidx){
   for (i in 1:length(unique(simoc_samp))){
     vidx[i] = c(which(simoc_samp == unique(simoc_samp)[i])[1])
   }
-  plot(simoc_samp[vidx], MEFF_simoc_meanx[vidx,t], ylim = c(min(MEFF_simoc_lower[,t]),max(MEFF_simoc_upper[,t])), col=col[2], border=col[2], xlab='Model/init ocean forcing', ylab = 'SLE relative to 2000 (m)', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(simoc_samp[vidx], MEFF_simoc_meanx[vidx,t], ylim = c(min(MEFF_simoc_lower[,t]),max(MEFF_simoc_upper[,t])), col=col[2], border=col[2], xlab='Model/init ocean forcing', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   for (i in vidx){
     lines(c(simoc_samp[i], simoc_samp[i]), c(MEFF_simoc_lower[i,t], MEFF_simoc_upper[i,t]), col=col[2], lwd = 3)
   }
@@ -578,7 +580,8 @@ for(t in tidx){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_simoc_",years[t],".pdf",sep="")) 
   }
   
-  plot(init_atmos_samp, MEFF_atmos_meanx[,t], ylim = c(min(MEFF_atmos_lower[,t]),max(MEFF_atmos_upper[,t])), col=col[3], border=col[3], xlab='Init atmosphere forcing', ylab = 'SLE relative to 2000 (m)', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(init_atmos_samp, MEFF_atmos_meanx[,t], ylim = c(min(MEFF_atmos_lower[,t]),max(MEFF_atmos_upper[,t])), col=col[3], border=col[3], xlab='Init atmosphere forcing', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   for (i in 1:length(unique(init_atmos_samp))){
     lines(c(unique(init_atmos_samp)[i], unique(init_atmos_samp)[i]), c(MEFF_atmos_lower[which(init_atmos_samp == unique(init_atmos_samp)[i])[1],t], MEFF_atmos_upper[which(init_atmos_samp == unique(init_atmos_samp)[i])[1],t]), col=col[3], lwd = 3)
   }
@@ -586,33 +589,40 @@ for(t in tidx){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_atmos_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(lapse_rate_samp),max(lapse_rate_samp)), ylim = c(min(MEFF_lapse_lower[,t]),max(MEFF_lapse_upper[,t])), type = "n", xlab = 'Lapse rate', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(lapse_rate_samp),max(lapse_rate_samp)), ylim = c(min(MEFF_lapse_lower[,t]),max(MEFF_lapse_upper[,t])), type = "n", xlab = 'Lapse rate', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(lapse_rate_samp, MEFF_lapse_meanx[,t], col = col[4], type = 'l', lwd = 2)
   polygon(c(lapse_rate_samp, rev(lapse_rate_samp)), c(MEFF_lapse_upper[,t], rev(MEFF_lapse_lower[,t])), col = adjustcolor(col[4], alpha.f=0.5),  border = NA)
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_lapse_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(refreeze_samp),max(refreeze_samp)), ylim = c(min(MEFF_refreeze_lower[,t]),max(MEFF_refreeze_upper[,t])), type = "n", xlab = 'Refreezing parameter', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(refreeze_samp),max(refreeze_samp)), ylim = c(min(MEFF_refreeze_lower[,t]),max(MEFF_refreeze_upper[,t])), type = "n", xlab = 'Refreezing parameter', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(refreeze_samp, MEFF_refreeze_meanx[,t], col = col[5], type = 'l', lwd = 2)
   polygon(c(refreeze_samp, rev(refreeze_samp)), c(MEFF_refreeze_upper[,t], rev(MEFF_refreeze_lower[,t])), col = adjustcolor(col[5], alpha.f=0.5),  border = NA)
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_refreeze_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(refreeze_frac_samp),max(refreeze_frac_samp)), ylim = c(min(MEFF_frac_lower[,t]),max(MEFF_frac_upper[,t])), type = "n", xlab = 'Refreezing fraction', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(refreeze_frac_samp),max(refreeze_frac_samp)), ylim = c(min(MEFF_frac_lower[,t]),max(MEFF_frac_upper[,t])), type = "n", xlab = 'Refreezing fraction', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(refreeze_frac_samp, MEFF_frac_meanx[,t], col = col[6], type = 'l', lwd = 2)
   polygon(c(refreeze_frac_samp, rev(refreeze_frac_samp)), c(MEFF_frac_upper[,t], rev(MEFF_frac_lower[,t])), col = adjustcolor(col[6], alpha.f=0.5),  border = NA)
-  #dev.print(pdf, paste("./Multi_year_plots/MEFF_refreeze_frac_",years[t],".pdf",sep="")) 
+  if (save_valid){
+    dev.print(pdf, paste("./Multi_year_plots/MEFF_refreeze_frac_",years[t],".pdf",sep="")) 
+  }
   
-  plot(0,0,xlim = c(min(PDD_ice_samp),max(PDD_ice_samp)), ylim = c(min(MEFF_ice_lower[,t]),max(MEFF_ice_upper[,t])), type = "n", xlab = 'Ice melt parameter', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(PDD_ice_samp),max(PDD_ice_samp)), ylim = c(min(MEFF_ice_lower[,t]),max(MEFF_ice_upper[,t])), type = "n", xlab = 'Ice melt parameter', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(PDD_ice_samp, MEFF_ice_meanx[,t], col = col[7], type = 'l', lwd = 2)
   polygon(c(PDD_ice_samp, rev(PDD_ice_samp)), c(MEFF_ice_upper[,t], rev(MEFF_ice_lower[,t])), col = adjustcolor(col[7], alpha.f=0.5),  border = NA)
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_PDD_ice_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(PDD_snow_samp),max(PDD_snow_samp)), ylim = c(min(MEFF_snow_lower[,t]),max(MEFF_snow_upper[,t])), type = "n", xlab = 'Snow melt parameter', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(PDD_snow_samp),max(PDD_snow_samp)), ylim = c(min(MEFF_snow_lower[,t]),max(MEFF_snow_upper[,t])), type = "n", xlab = 'Snow melt parameter', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(PDD_snow_samp, MEFF_snow_meanx[,t], col = col[8], type = 'l', lwd = 2)
   polygon(c(PDD_snow_samp, rev(PDD_snow_samp)), c(MEFF_snow_upper[,t], rev(MEFF_snow_lower[,t])), col = adjustcolor(col[8], alpha.f=0.5),  border = NA)
   if (save_valid){
@@ -623,7 +633,8 @@ for(t in tidx){
   for (i in 1:length(unique(melt_param_samp))){
     vvidx[i] = c(which(melt_param_samp == unique(melt_param_samp)[i])[1])
   }
-  plot(melt_param_samp[vvidx], MEFF_melt_meanx[vvidx,t], ylim = c(min(MEFF_melt_lower[,t]),max(MEFF_melt_upper[,t])), col=col[9], border=col[9], xlab='Melt parameterisation', ylab = 'SLE relative to 2000 (m)', cex = 1.1, cex.main = 1.5, cex.axis = 0.9, cex.lab = 1.5)
+  plot(melt_param_samp[vvidx], MEFF_melt_meanx[vvidx,t], ylim = c(min(MEFF_melt_lower[,t]),max(MEFF_melt_upper[,t])), col=col[9], border=col[9], xlab='Melt parameterisation', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 0.9, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   for (i in vvidx){
     lines(c(melt_param_samp[i], melt_param_samp[i]), c(MEFF_melt_lower[i,t], MEFF_melt_upper[i,t]), col=col[9], lwd = 3)
   }
@@ -631,35 +642,40 @@ for(t in tidx){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_melt_param_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(heat_flux_PICO_samp),max(heat_flux_PICO_samp)), ylim = c(min(MEFF_PICO_lower[,t]),max(MEFF_PICO_upper[,t])), type = "n", xlab = 'PICO', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(heat_flux_PICO_samp),max(heat_flux_PICO_samp)), ylim = c(min(MEFF_PICO_lower[,t]),max(MEFF_PICO_upper[,t])), type = "n", xlab = 'PICO', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(heat_flux_PICO_samp, MEFF_PICO_meanx[,t], col = col[10], type = 'l', lwd = 2)
   polygon(c(heat_flux_PICO_samp, rev(heat_flux_PICO_samp)), c(MEFF_PICO_upper[,t], rev(MEFF_PICO_lower[,t])), col = adjustcolor(col[10], alpha.f=0.5),  border = NA)
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_hf_PICO_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(heat_flux_Plume_samp),max(heat_flux_Plume_samp)), ylim = c(min(MEFF_Plume_lower[,t]),max(MEFF_Plume_upper[,t])), type = "n", xlab = 'Plume', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(heat_flux_Plume_samp),max(heat_flux_Plume_samp)), ylim = c(min(MEFF_Plume_lower[,t]),max(MEFF_Plume_upper[,t])), type = "n", xlab = 'Plume', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(heat_flux_Plume_samp, MEFF_Plume_meanx[,t], col = col[11], type = 'l', lwd = 2)
   polygon(c(heat_flux_Plume_samp, rev(heat_flux_Plume_samp)), c(MEFF_Plume_upper[,t], rev(MEFF_Plume_lower[,t])), col = adjustcolor(col[11], alpha.f=0.5),  border = NA)
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_hf_Plume_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(heat_flux_Burgard_samp),max(heat_flux_Burgard_samp)), ylim = c(min(MEFF_Burgard_lower[,t]),max(MEFF_Burgard_upper[,t])), type = "n", xlab = 'Burgard', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(heat_flux_Burgard_samp),max(heat_flux_Burgard_samp)), ylim = c(min(MEFF_Burgard_lower[,t]),max(MEFF_Burgard_upper[,t])), type = "n", xlab = 'Burgard', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(heat_flux_Burgard_samp, MEFF_Burgard_meanx[,t], col = col[12], type = 'l', lwd = 2)
   polygon(c(heat_flux_Burgard_samp, rev(heat_flux_Burgard_samp)), c(MEFF_Burgard_upper[,t], rev(MEFF_Burgard_lower[,t])), col = adjustcolor(col[12], alpha.f=0.5),  border = NA)
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_hf_Burg_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(heat_flux_ISMIP6_nonlocal_samp),max(heat_flux_ISMIP6_nonlocal_samp)), ylim = c(min(MEFF_ISMIP6_lower[,t]),max(MEFF_ISMIP6_upper[,t])), type = "n", xlab = 'ISMIP6 non-local', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(heat_flux_ISMIP6_nonlocal_samp),max(heat_flux_ISMIP6_nonlocal_samp)), ylim = c(min(MEFF_ISMIP6_lower[,t]),max(MEFF_ISMIP6_upper[,t])), type = "n", xlab = 'ISMIP6 non-local', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(heat_flux_ISMIP6_nonlocal_samp, MEFF_ISMIP6_meanx[,t], col = col[13], type = 'l', lwd = 2)
   polygon(c(heat_flux_ISMIP6_nonlocal_samp, rev(heat_flux_ISMIP6_nonlocal_samp)), c(MEFF_ISMIP6_upper[,t], rev(MEFF_ISMIP6_lower[,t])), col = adjustcolor(col[13], alpha.f=0.5),  border = NA)
   if (save_valid){
     dev.print(pdf, paste("./Multi_year_plots/MEFF_hf_ISMIP_",years[t],".pdf",sep="")) 
   }
   
-  plot(0,0,xlim = c(min(heat_flux_ISMIP6_nonlocal_slope_samp),max(heat_flux_ISMIP6_nonlocal_slope_samp)), ylim = c(min(MEFF_ISMIP6_slope_lower[,t]),max(MEFF_ISMIP6_slope_upper[,t])), type = "n", xlab = 'ISMIP6 non-local slope', ylab = "SLE relative to 2000 (m)", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  plot(0,0,xlim = c(min(heat_flux_ISMIP6_nonlocal_slope_samp),max(heat_flux_ISMIP6_nonlocal_slope_samp)), ylim = c(min(MEFF_ISMIP6_slope_lower[,t]),max(MEFF_ISMIP6_slope_upper[,t])), type = "n", xlab = 'ISMIP6 non-local slope', ylab = paste("SLE at ",years[t]," relative to 2000 (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+  abline(h = 0, lwd = 0.5)
   lines(heat_flux_ISMIP6_nonlocal_slope_samp, MEFF_ISMIP6_slope_meanx[,t], col = col[14], type = 'l', lwd = 2)
   polygon(c(heat_flux_ISMIP6_nonlocal_slope_samp, rev(heat_flux_ISMIP6_nonlocal_slope_samp)), c(MEFF_ISMIP6_slope_upper[,t], rev(MEFF_ISMIP6_slope_lower[,t])), col = adjustcolor(col[14], alpha.f=0.5),  border = NA)
   if (save_valid){

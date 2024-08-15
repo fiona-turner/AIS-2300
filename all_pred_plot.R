@@ -1,3 +1,5 @@
+dev.off()
+
 layout_mat <- matrix(c(1:9), nrow = 3, ncol = 3,
                      byrow = TRUE)
 

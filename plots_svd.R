@@ -12,7 +12,7 @@ years <- seq(1955, 2300, 5)
 # SSP5-85 rgb(132, 11, 34, maxColorValue = 255)
 par(mfrow = c(1, 1))
 
-plot(0,0,xlim = c(1955,2300),ylim = c(-1,5),type = "n",xlab = "Year", ylab = paste("Sea level contribution relative to 2000 (m SLE)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(0,0,xlim = c(1955,2300),ylim = c(-2,6),type = "n",xlab = "Year", ylab = paste("Sea level contribution relative to 2000 (m SLE)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 abline(v = 2000, lwd = 0.5)
 abline(h = 0, lwd = 0.5)
 
@@ -48,7 +48,7 @@ my_lay <- layout(mat = layout_mat,
 
 par(mar = c(5.1, 4.1, 0, 0))
 
-plot(0,0,xlim = c(1955,2300),ylim = c(-1,5),type = "n",xlab = "Year", ylab = paste("SLE (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(0,0,xlim = c(1955,2300),ylim = c(-2,6),type = "n",xlab = "Year", ylab = paste("SLE (m)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 abline(v = 2000, lwd = 0.5)
 abline(h = 0, lwd = 0.5)
 
@@ -72,41 +72,17 @@ legend("topleft", legend=c("SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5
 
 par(mar = c(5.1, 0, 0, 0))
 
-boxplot(cbind(quant119[c(2,3,5,7,8),70],quant126[c(2,3,5,7,8),70],quant245[c(2,3,5,7,8),70],quant370[c(2,3,5,7,8),70],quant585[c(2,3,5,7,8),70]), frame = FALSE, axes = FALSE,  col=c(rgb(30, 150, 132, maxColorValue = 255, alpha = 153),rgb(29, 51, 84, maxColorValue = 255),rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)),ylim = c(-1,5))
+boxplot(cbind(quant119[c(2,3,5,7,8),70],quant126[c(2,3,5,7,8),70],quant245[c(2,3,5,7,8),70],quant370[c(2,3,5,7,8),70],quant585[c(2,3,5,7,8),70]), frame = FALSE, axes = FALSE,  col=c(rgb(30, 150, 132, maxColorValue = 255, alpha = 153),rgb(29, 51, 84, maxColorValue = 255),rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)),ylim = c(-2,6))
 
 
 if (save_plot){
   dev.print(pdf, width = 11.69, height = 8.27, "Multi_year_plots/med_predictions_bplots.pdf") 
 }
 
-#plot(0,0,xlim = c(1955,2300),ylim = c(-1,5),type = "n",xlab = "Year", ylab = paste("Sea level contribution relative to 2000 (m SLE)"), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
-#abline(v = 2000, lwd = 0.5)
-#abline(h = 0, lwd = 0.5)
 
-#lines(years, apply(distn585, 2, quantile, probs = 0.5), col = rgb(132, 11, 34, maxColorValue = 255), type = 'l', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn585, 2, quantile, probs = 0.05), rev(apply(distn585, 2, quantile, probs = 0.95))), col = rgb(132, 11, 34, maxColorValue = 255, alpha = 51), border = NA)
+dev.off()
 
-#lines(years, apply(distn370, 2, quantile, probs = 0.5), col = rgb(242, 17, 17, maxColorValue = 255), type = 'l', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn370, 2, quantile, probs = 0.05), rev(apply(distn370, 2, quantile, probs = 0.95))), col = rgb(242, 17, 17, maxColorValue = 255, alpha = 51), border = NA)
-
-#lines(years, apply(distn245, 2, quantile, probs = 0.5), col = rgb(234, 221, 61, maxColorValue = 255), type = 'l', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn245, 2, quantile, probs = 0.05), rev(apply(distn245, 2, quantile, probs = 0.95))), col = rgb(234, 221, 61, maxColorValue = 255, alpha = 51), border = NA)
-
-#lines(years, apply(distn126, 2, quantile, probs = 0.5), col = rgb(29, 51, 84, maxColorValue = 255), type = 'l', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn126, 2, quantile, probs = 0.05), rev(apply(distn126, 2, quantile, probs = 0.95))), col = rgb(29, 51, 84, maxColorValue = 255, alpha = 51), border = NA)
-
-#lines(years, apply(distn119, 2, quantile, probs = 0.5), col = rgb(30, 150, 132, maxColorValue = 255), type = 'l', lwd = 2)
-#polygon(c(years, rev(years)), c(apply(distn119, 2, quantile, probs = 0.05), rev(apply(distn119, 2, quantile, probs = 0.95))), col = rgb(30, 150, 132, maxColorValue = 255, alpha = 51), border = NA)
-
-#legend("topleft", legend=c("SSP1-1.9", "SSP1-2.6", "SSP2-4.5", "SSP3-7.0", "SSP5-8.5"),
-#       text.col=c(rgb(30, 150, 132, maxColorValue = 255), rgb(29, 51, 84, maxColorValue = 255), rgb(234, 221, 61, maxColorValue = 255), rgb(242, 17, 17, maxColorValue = 255), rgb(132, 11, 34, maxColorValue = 255)), cex=1.1, bty = "n")
-#if (save_plot){
-#  dev.print(pdf, width = 11.69, height = 8.27, "Multi_year_plots/med_predictions.pdf") 
-#}
-
-par(mfrow = c(1, 1))
-
-plot(GSAT_585, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlim = c(-1,17), xlab='GSAT change relative to 2015-2044', ylab = 'SLE relative to 2000', ylim=c(-2.2, 9), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5 )
+plot(GSAT_585, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlim = c(-1,17), xlab='GSAT change relative to 2015-2044', ylab = 'SLE relative to 2000', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5 )
 points(GSAT_370, SLE370_meanx[,70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(GSAT_245, SLE245_meanx[,70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(GSAT_126, SLE126_meanx[,70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -120,7 +96,7 @@ if (save_plot){
 }
 
 
-plot(lapse_rate, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Lapse rate (\u00B0C/km)', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 10), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(lapse_rate, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Lapse rate (\u00B0C/km)', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(lapse_rate, SLE370_meanx[,70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(lapse_rate, SLE245_meanx[,70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(lapse_rate, SLE126_meanx[,70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -134,7 +110,7 @@ if (save_plot){
 }
 
 
-plot(heat_flux_Burgard[heat_flux_Burgard != 5*10**-4], SLE585_meanx[c(which(heat_flux_Burgard != 5*10**-4)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, Burgard scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(heat_flux_Burgard[heat_flux_Burgard != 5*10**-4], SLE585_meanx[c(which(heat_flux_Burgard != 5*10**-4)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, Burgard scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(heat_flux_Burgard[heat_flux_Burgard != 5*10**-4], SLE370_meanx[c(which(heat_flux_Burgard != 5*10**-4)),70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(heat_flux_Burgard[heat_flux_Burgard != 5*10**-4], SLE245_meanx[c(which(heat_flux_Burgard != 5*10**-4)),70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(heat_flux_Burgard[heat_flux_Burgard != 5*10**-4], SLE126_meanx[c(which(heat_flux_Burgard != 5*10**-4)),70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -148,7 +124,7 @@ if (save_plot){
 }
 
 
-plot(heat_flux_ISMIP6_nonlocal[heat_flux_ISMIP6_nonlocal != 1.45*10**4], SLE585_meanx[c(which(heat_flux_ISMIP6_nonlocal != 1.45*10**4)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, ISMIP6 non-local scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(heat_flux_ISMIP6_nonlocal[heat_flux_ISMIP6_nonlocal != 1.45*10**4], SLE585_meanx[c(which(heat_flux_ISMIP6_nonlocal != 1.45*10**4)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, ISMIP6 non-local scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(heat_flux_ISMIP6_nonlocal[heat_flux_ISMIP6_nonlocal != 1.45*10**4], SLE370_meanx[c(which(heat_flux_ISMIP6_nonlocal != 1.45*10**4)),70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(heat_flux_ISMIP6_nonlocal[heat_flux_ISMIP6_nonlocal != 1.45*10**4], SLE245_meanx[c(which(heat_flux_ISMIP6_nonlocal != 1.45*10**4)),70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(heat_flux_ISMIP6_nonlocal[heat_flux_ISMIP6_nonlocal != 1.45*10**4], SLE126_meanx[c(which(heat_flux_ISMIP6_nonlocal != 1.45*10**4)),70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -162,7 +138,7 @@ if (save_plot){
 }
 
 
-plot(heat_flux_ISMIP6_nonlocal_slope[heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6], SLE585_meanx[c(which(heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, ISMIP6 non-local slope scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(heat_flux_ISMIP6_nonlocal_slope[heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6], SLE585_meanx[c(which(heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, ISMIP6 non-local slope scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(heat_flux_ISMIP6_nonlocal_slope[heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6], SLE370_meanx[c(which(heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6)),70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(heat_flux_ISMIP6_nonlocal_slope[heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6], SLE245_meanx[c(which(heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6)),70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(heat_flux_ISMIP6_nonlocal_slope[heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6], SLE126_meanx[c(which(heat_flux_ISMIP6_nonlocal_slope != 2.06*10**6)),70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -176,7 +152,7 @@ if (save_plot){
 }
 
 
-plot(heat_flux_PICO[(heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5)], SLE585_meanx[c(which(heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, PICO scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9.2), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(heat_flux_PICO[(heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5)], SLE585_meanx[c(which(heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, PICO scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(heat_flux_PICO[heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5], SLE370_meanx[c(which(heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5)),70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(heat_flux_PICO[heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5], SLE245_meanx[c(which(heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5)),70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(heat_flux_PICO[heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5], SLE126_meanx[c(which(heat_flux_PICO != 4*10**-5 & heat_flux_PICO != 7*10**-5)),70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -190,7 +166,7 @@ if (save_plot){
 }
 
 
-plot(heat_flux_Plume[heat_flux_Plume != 5.9*10**-4], SLE585_meanx[c(which(heat_flux_Plume != 5.9*10**-4)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, Plume scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9.2), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(heat_flux_Plume[heat_flux_Plume != 5.9*10**-4], SLE585_meanx[c(which(heat_flux_Plume != 5.9*10**-4)),70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Heat flux, Plume scheme', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(heat_flux_Plume[heat_flux_Plume != 5.9*10**-4], SLE370_meanx[c(which(heat_flux_Plume != 5.9*10**-4)),70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(heat_flux_Plume[heat_flux_Plume != 5.9*10**-4], SLE245_meanx[c(which(heat_flux_Plume != 5.9*10**-4)),70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(heat_flux_Plume[heat_flux_Plume != 5.9*10**-4], SLE126_meanx[c(which(heat_flux_Plume != 5.9*10**-4)),70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -204,7 +180,7 @@ if (save_plot){
 }
 
 
-plot(refreeze, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Refreezing parameter (m)', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(refreeze, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Refreezing parameter (m)', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(refreeze, SLE370_meanx[,70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(refreeze, SLE245_meanx[,70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(refreeze, SLE126_meanx[,70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -218,7 +194,7 @@ if (save_plot){
 }
 
 
-plot(refreeze_frac, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Refreezing fraction', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9.2), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(refreeze_frac, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Refreezing fraction', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(refreeze_frac, SLE370_meanx[,70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(refreeze_frac, SLE245_meanx[,70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(refreeze_frac, SLE126_meanx[,70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -232,7 +208,7 @@ if (save_plot){
 }
 
 
-plot(PDD_ice, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Ice melt parameter', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9.2), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(PDD_ice, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Ice melt parameter', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(PDD_ice, SLE370_meanx[,70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(PDD_ice, SLE245_meanx[,70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(PDD_ice, SLE126_meanx[,70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -246,7 +222,7 @@ if (save_plot){
 }
 
 
-plot(PDD_snow, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Snow melt parameter', ylab = 'SLE relative to 2000 (m)', ylim=c(-2.2, 9.2), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(PDD_snow, SLE585_meanx[,70], col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), xlab='Snow melt parameter', ylab = 'SLE relative to 2000 (m)', ylim=c(-3.8, 9.8), cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 points(PDD_snow, SLE370_meanx[,70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153))
 points(PDD_snow, SLE245_meanx[,70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153))
 points(PDD_snow, SLE126_meanx[,70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153))
@@ -260,7 +236,7 @@ if (save_plot){
 }
 
 
-plot(melt_param, SLE119_meanx[,70], at = 0:4*7, col=rgb(30, 150, 132, maxColorValue = 255, alpha = 153), xlab='Melt parameterisation', ylab = 'SLE relative to 2000 (m)', xlim = c(0, 33.5), ylim=c(-2.2, 9.2), yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.lab = 1.5)
+plot(melt_param, SLE119_meanx[,70], at = 0:4*7, col=rgb(30, 150, 132, maxColorValue = 255, alpha = 153), xlab='Melt parameterisation', ylab = 'SLE relative to 2000 (m)', xlim = c(0, 33.5), ylim=c(-3.8, 9.8), yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.lab = 1.5)
 plot(melt_param, SLE126_meanx[,70], at = 0:4*7 + 1, col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153), add = TRUE, yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.lab = 1.5)
 plot(melt_param, SLE245_meanx[,70], at = 0:4*7 + 2, col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153), add = TRUE, cex = 1.1, cex.main = 1.5, cex.lab = 1.5)
 plot(melt_param, SLE370_meanx[,70], at = 0:4*7 + 3, col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153), add = TRUE, yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.lab = 1.5)
@@ -278,7 +254,7 @@ if (save_plot){
 }
 
 
-plot(init_atmos, SLE119_meanx[,70], at = 0:1*7, col=rgb(30, 150, 132, maxColorValue = 255, alpha = 153), xlab='Initial atmosphere forcing', ylab = 'SLE relative to 2000 (m)', xlim = c(-0.1, 13.1), ylim=c(-2.2, 9.2), yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(init_atmos, SLE119_meanx[,70], at = 0:1*7, col=rgb(30, 150, 132, maxColorValue = 255, alpha = 153), xlab='Initial atmosphere forcing', ylab = 'SLE relative to 2000 (m)', xlim = c(-0.1, 13.1), ylim=c(-3.8, 9.8), yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 plot(init_atmos, SLE126_meanx[,70], at = 0:1*7 + 1, col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153), add = TRUE, yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 plot(init_atmos, SLE245_meanx[,70], at = 0:1*7 + 2, col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153), add = TRUE, cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 plot(init_atmos, SLE370_meanx[,70], at = 0:1*7 + 3, col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153), add = TRUE, yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
@@ -293,7 +269,7 @@ if (save_plot){
 }
 
 
-plot(simoc, SLE119_meanx[,70], at = 0:2*7, col=rgb(30, 150, 132, maxColorValue = 255, alpha = 153), xlab='Ice sheet model', ylab = 'SLE relative to 2000 (m)', xlim = c(-0.1, 20.1), ylim=c(-2.2, 9.2), yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(simoc, SLE119_meanx[,70], at = 0:2*7, col=rgb(30, 150, 132, maxColorValue = 255, alpha = 153), xlab='Ice sheet model', ylab = 'SLE relative to 2000 (m)', xlim = c(-0.1, 20.1), ylim=c(-3.8, 9.8), yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 plot(simoc, SLE126_meanx[,70], at = 0:2*7 + 1, col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153), add = TRUE, yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 plot(simoc, SLE245_meanx[,70], at = 0:2*7 + 2, col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153), add = TRUE, cex = 1.1, cex.main = 1.5, cex.axis = 1.3, cex.lab = 1.5)
 plot(simoc, SLE370_meanx[,70], at = 0:2*7 + 3, col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153), add = TRUE, yaxt='n', xaxt='n', cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
@@ -339,7 +315,7 @@ if (save_plot){
 }
 
 
-plot(density(distn585[,70]), col=rgb(132, 11, 34, maxColorValue = 255), xlab = "SLE at 2300 relative to 2000 (m)", main = " ", ylim=c(0,0.35), lwd = 2, cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+plot(density(distn585[,70]), col=rgb(132, 11, 34, maxColorValue = 255), xlab = "SLE at 2300 relative to 2000 (m)", main = " ", ylim=c(0,0.3), lwd = 2, cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 lines(density(distn370[,70]), col=rgb(242, 17, 17, maxColorValue = 255), lwd=2)
 lines(density(distn245[,70]), col=rgb(234, 221, 61, maxColorValue = 255), lwd = 2)
 lines(density(distn126[,70]), col=rgb(29, 51, 84, maxColorValue = 255), lwd = 2)
@@ -377,7 +353,7 @@ if (save_plot){
 }
 
 
-hist(SLE585_meanx[,70], breaks = 20, col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), ylim=c(0, 900), xlab = "SLE relative to 2000 (m)", main = " ", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
+hist(SLE585_meanx[,70], breaks = 20, col=rgb(132, 11, 34, maxColorValue = 255, alpha = 153), ylim=c(0, 1200), xlab = "SLE relative to 2000 (m)", main = " ", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5)
 hist(SLE370_meanx[,70], col=rgb(242, 17, 17, maxColorValue = 255, alpha = 153), xlab = "SLE relative to 2000 (m)", main = " ", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5, add = T)
 hist(SLE245_meanx[,70], col=rgb(234, 221, 61, maxColorValue = 255, alpha = 153), xlab = "SLE relative to 2000 (m)", main = " ", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5, add = T)
 hist(SLE126_meanx[,70], col=rgb(29, 51, 84, maxColorValue = 255, alpha = 153), xlab = "SLE relative to 2000 (m)", main = " ", cex = 1.1, cex.main = 1.5, cex.axis = 1.5, cex.lab = 1.5, add = T)
