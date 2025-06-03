@@ -12,7 +12,7 @@ source("loocvandmeff.R")
 ## save predictions?
 save_pred <- FALSE
 ## use updated FAIR GSAT values?
-FAIR2 <- FALSE
+FAIR2 <- TRUE
 ## write quantiles to cscv?
 write_outputs_to_csv <- FALSE
 source("predictemu_svd.R")
@@ -24,7 +24,7 @@ source("plots_svd.R")
 ## if you've run the plots functions, clear all existing plots before running below to reset the formatting
 source("load_IMBIE.R")
 #source("calibrate.R")
-source("mh.R")
+
 
 #lapse_rate has range [-12, -5]
 #refreeze has range [0, 15]
@@ -49,8 +49,19 @@ source("mh.R")
 #mh_585 <- mh_calib(obs, sig, 15, 'SSP585', c(0.1, 0.1, 0.01, 0.1, 0.1, 1*10**-05, 1*10**3, 1*10**5, 1*10**-6, 1*10**-05), 10000, 1000)
 #[1] "Acceptance ratio is 0.6203"
 
-#try running without scenario being an input at all
-mh <- mh_calib(obs, sig, 15, c(0.1, 0.1, 0.01, 0.1, 0.1, 1*10**-05, 1*10**3, 1*10**5, 1*10**-6, 1*10**-05), 10000, 1000)
+#run without scenario being an input at all
+step_size <- c(0.1, 0.1, 0.01, 0.1, 0.1, 1*10**-05, 1*10**3, 1*10**5, 1*10**-6, 1*10**-05)
+fac <- 15
+obs_sig <- sig
+chain_length <- 10000 
+burn_in <- 1000
+source("mh.R")
+mh <- mh_calib(obs, obs_sig, fac, step_size, chain_length, burn_in)
+
+
+
+write.csv(mh, "Distributions/mh_output_upd.csv", row.names = FALSE)
+
 
 for(i in 1:length(unique(X$simoc))){
   mh$simoc[mh$simoc == i] = levels(X$simoc)[[i]]
@@ -77,7 +88,6 @@ for(i in 1:length(unique(X$melt_param))){
 #  mh_585$melt_param[mh_585$melt_param == i] = levels(X$melt_param)[[i]]
 }
 
-write.csv(mh, "Distributions/mh_output.csv", row.names = FALSE)
 #write.csv(mh_119, "Distributions/mh_119.csv", row.names = FALSE)
 #write.csv(mh_126, "Distributions/mh_126.csv", row.names = FALSE)
 #write.csv(mh_245, "Distributions/mh_245.csv", row.names = FALSE)

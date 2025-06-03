@@ -1,6 +1,7 @@
-FAIR_data/*
+#FAIR_data/*
 README.txt
 *.csv
-qemu/*
+#qemu/*
 *.DS_Store
-calibration-data/*
+#calibration-data/*
+.Rproj.user

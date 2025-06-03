@@ -1,7 +1,7 @@
 
 if(FAIR2){
   ## load new FAIR data
-  f2path = '~/Documents/Emulators/Data/FAIR_data/'
+  f2path = './FAIR_data/'
   ssp <- c("ssp119", "ssp126", "ssp245", "ssp370", "ssp585")
   FORpred = NULL
   for( s in ssp){

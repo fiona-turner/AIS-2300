@@ -4,12 +4,19 @@
 Given 1400 simulations of two AIS models, Kori and PISM, we build a random forest emulator, creating a linear regression using perturbed parameters and a RF for the residual.
 Output of model is time series of SLE, 1950 - 2300. In order to emulate whole time series at once, we use singular value decomposition to transform 350-year data (made of 70 5-year timeslices) to *r* components, were *r* is the number of components that represent >99% of variance within the data.
 
-
+## Prerequisites 
 Install required packages:
-install.packages('data.table') - extension of 'data.frame'
-install.packages('quantregForest') - quantile regression forests
-install.packages('qemu') - quick emulator, built on top of 'quantregForest' package
 
+1) data.table. This is an extension of 'data.frame'. Install this using the command: 
+install.packages('data.table')  
+
+2) quantile regression forests. Install this using the command:  
+install.packages('quantregForest')  
+
+3) - quick emulator, built on top of 'quantregForest' package. This has to be installed from the qemu folder, included in this repo. To install, first ensure you are in the main directory, and then run:  
+install.packages("./qemu/",  repos = NULL,  type = "source")  
+
+## Running 
 1. Build the emulator
    
    jointemu_svd.R

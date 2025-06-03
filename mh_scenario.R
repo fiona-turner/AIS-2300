@@ -1,4 +1,4 @@
-mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
+mh_calib_scenario <- function(obs, obs_sig, fac, step_size, chain_length, burn_in,scenario){
   ## a function to run Metropolis-Hastings on the random forest emulator
   # inputs:
   # obs = the observations to be used in the likelihood calculation
@@ -7,6 +7,9 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
   # step_size = the size of the noise component used to generate new states
   # chain_length = length of markov chain we wish to sample
   # burn_in = number of samples we remove from beginning of chain
+  # scenario = choice of scenario ("ssp119", "ssp126", "ssp245", "ssp370", "ssp585").
+  
+  # NB!! OLD!! Sampling should be ssp scenario agnostic
   
   #get a GSAT value according to scenario
   if(FAIR2){
@@ -27,6 +30,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
     FORpred$yend <- rowMeans(subset(FORpred,select=y2271:y2300))
     FORpred$GSAT_2300 <- (FORpred$yend-FORpred$ystart)
     #tmp <- FORpred[scenario == scenario] 
+    tmp <- FORpred[(FORpred$scenario == scenario),] #these are the FAIR samples which come from the scenario we want (we probably don't need to loop over all scenarios but whatever)
   } else {
     ## or IPCC FAIR data
     fpath <- "./"
@@ -34,11 +38,10 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
     FORpred$ystart <- rowMeans(subset(FORpred,select=y2015:y2044))
     FORpred$yend <- rowMeans(subset(FORpred,select=y2271:y2300))
     FORpred$GSAT_2300 <- (FORpred$yend-FORpred$ystart)
-    #tmp <- FORpred[scenario == scenario]
+    tmp <- FORpred[(FORpred$scenario == scenario),] #these are the FAIR samples which come from the scenario we want (we probably don't need to loop over all scenarios but whatever)
   }
   #set GSAT to mean of FAIR simulations
-  GSAT_2300 <- mean(FORpred$GSAT_2300)
-  #if using scenario then would set to a random sample from tmp
+  GSAT_2300 <- mean(tmp$GSAT_2300)#initialize the chain with the mean value of FAIR simulations 
   
   #set variables to initial values
   simoc <- unique(X$simoc)[1]
@@ -54,16 +57,16 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
   heat_flux_ISMIP6_nonlocal_slope = heat_flux_ISMIP6_nonlocal_slope_nom[1]
   heat_flux_PICO = heat_flux_PICO_nom[1]
   heat_flux_Plume = heat_flux_Plume_nom[1]
-
+  
   #save variables in data frame as current state
   current_state <- as.list(data.frame(GSAT_2300, simoc, init_atmos, lapse_rate, refreeze, refreeze_frac, PDD_ice, PDD_snow, melt_param, 
-                               heat_flux_PICO, heat_flux_Plume, heat_flux_Burgard, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope))
+                                      heat_flux_PICO, heat_flux_Plume, heat_flux_Burgard, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope))
   
   
   #function to create a proposed state, by taking a step away from current state
-  sample_proposal <- function(current_state) {
-    #if using scenario would resample from FAIR again
-    GSAT_2300 = current_state$GSAT_2300
+  sample_proposal <- function(current_state, tmp) {
+    
+    GSAT_2300 = sample(tmp$GSAT_2300,1) #sample the temperature from the tmp, which holds the FAIR
     simoc = sample(unique(X$simoc), 1, TRUE)
     init_atmos = sample(unique(X$init_atmos), 1, TRUE)
     lapse_rate = as.numeric(current_state['lapse_rate']) + rnorm(1, mean = 0, sd = step_size[1])
@@ -127,11 +130,11 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
     } else if (heat_flux_Plume  > 10*10**-4){
       heat_flux_Plume  = 10*10**-4
     }
-
+    
     proposed_state <- as.list(data.frame(GSAT_2300, simoc, init_atmos, lapse_rate, refreeze, refreeze_frac, PDD_ice, PDD_snow, melt_param, 
-                                      heat_flux_PICO, heat_flux_Plume, heat_flux_Burgard, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope))
+                                         heat_flux_PICO, heat_flux_Plume, heat_flux_Burgard, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope))
     return(proposed_state)  
-    }
+  }
   #function to calculate acceptance probability
   acceptance_prob <- function(current_state, proposed_state, obs, obs_var, fac) {
     #get prediction from current state
@@ -158,27 +161,10 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
     dim(proposed_varx) <- c(n, n)
     #current likelihood using obs
     #variance set to obs error, obs_sig, plus a model error, set to fac*obs_sig
-    
-    #old way
     current_likelihood <- exp(-0.5*sum((obs - current_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(current_varx)[6:13]))))
-    
-    #new way
-    M_current = diag(obs_sig) + fac*diag(obs_sig) + current_varx[6:13, 6:13] #covariance matrix 
-    current_obs_emu_diff <- (obs - current_meanx[6:13])
-    current_obs_emu_diff <- matrix(current_obs_emu_diff, nrow = 1, ncol = length(current_obs_emu_diff))
-    current_loglikelihood <- current_obs_emu_diff %*% solve(M_current) %*% t(current_obs_emu_diff)
-    current_likelihood <- exp(-0.5*current_loglikelihood - 0.5*log(det(M_current))) #note that the prior comes in via the limits on the MCMC, likelihood is uniform in the possible interval so it all cancels out
     
     #proposed likelihood
     proposed_likelihood <- exp(-0.5*sum((obs - proposed_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(proposed_varx)[6:13]))))
-    
-    
-    M_proposed = diag(obs_sig) + fac*diag(obs_sig) + proposed_varx[6:13, 6:13] #covariance matrix 
-    proposed_obs_emu_diff <- (obs - proposed_meanx[6:13])
-    proposed_obs_emu_diff <- matrix(proposed_obs_emu_diff, nrow = 1, ncol = length(proposed_obs_emu_diff))
-    proposed_loglikelihood <- proposed_obs_emu_diff %*% solve(M_proposed) %*% t(proposed_obs_emu_diff)
-    proposed_likelihood <- exp(-0.5*proposed_loglikelihood - 0.5*log(det(M_proposed)))
-    
     
     #metropolis ratio
     alpha <- min(1, proposed_likelihood / current_likelihood)
@@ -193,7 +179,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in){
   #run Metropolis-Hastings iterations
   for (i in 1:chain_length) {
     # Propose new state
-    proposed_state <- sample_proposal(current_state)
+    proposed_state <- sample_proposal(current_state, tmp)
     
     # Calculate acceptance probability
     alpha <- acceptance_prob(current_state, proposed_state, obs, obs_var, fac)

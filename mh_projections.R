@@ -1,15 +1,41 @@
-fpath <- "~/Documents/Emulators/qemu/Distributions"
-param_119 <- fread(file.path(fpath, "mh_output.csv"))
-param_126 <- fread(file.path(fpath, "mh_output.csv"))
-param_245 <- fread(file.path(fpath, "mh_output.csv"))
-param_370 <- fread(file.path(fpath, "mh_output.csv"))
-param_585 <- fread(file.path(fpath, "mh_output.csv"))
+fpath <- "./Distributions"
+fname <-  "mh_output_upd.csv"
+param_119 <- fread(file.path(fpath,fname))
+param_126 <- fread(file.path(fpath,fname))
+param_245 <- fread(file.path(fpath,fname))
+param_370 <- fread(file.path(fpath,fname))
+param_585 <- fread(file.path(fpath,fname))
 
-param_119$GSAT_2300 <- sample(FORpred[scenario == 'SSP119']$GSAT_2300, dim(param_119)[1], replace = TRUE)
-param_126$GSAT_2300 <- sample(FORpred[scenario == 'SSP126']$GSAT_2300, dim(param_126)[1], replace = TRUE)
-param_245$GSAT_2300 <- sample(FORpred[scenario == 'SSP245']$GSAT_2300, dim(param_245)[1], replace = TRUE)
-param_370$GSAT_2300 <- sample(FORpred[scenario == 'SSP370']$GSAT_2300, dim(param_370)[1], replace = TRUE)
-param_585$GSAT_2300 <- sample(FORpred[scenario == 'SSP585']$GSAT_2300, dim(param_585)[1], replace = TRUE)
+param_119$GSAT_2300 <- sample(FORpred[(FORpred$scenario == 'SSP119'),]$GSAT, dim(param_119)[1], replace = TRUE) #sample the GSAT from those which come from ssp119
+param_126$GSAT_2300 <- sample(FORpred[(FORpred$scenario == 'SSP126'),]$GSAT_2300, dim(param_126)[1], replace = TRUE)
+param_245$GSAT_2300 <- sample(FORpred[(FORpred$scenario == 'SSP245'),]$GSAT_2300, dim(param_245)[1], replace = TRUE)
+param_370$GSAT_2300 <- sample(FORpred[(FORpred$scenario == 'SSP370'),]$GSAT_2300, dim(param_370)[1], replace = TRUE)
+param_585$GSAT_2300 <- sample(FORpred[(FORpred$scenario == 'SSP585'),]$GSAT_2300, dim(param_585)[1], replace = TRUE)
+
+# make a plot of the histograms of GSAT
+colors <- c("blue", "red", "green", "purple", "orange")
+hist(param_119$GSAT_2300, 
+     xlab = "GSAT", 
+     ylab = "Frequency", 
+     col = colors[1], 
+     border = "black", 
+     #xlim = c(20, 100),  # Set x-axis limits
+     #ylim = c(0, 250),   # Set y-axis limits
+     freq = TRUE)
+
+# Overlay the other histograms
+hist(param_126$GSAT_2300, col = colors[2], border = "black", add = TRUE)
+hist(param_245$GSAT_2300, col = colors[3], border = "black", add = TRUE)
+hist(param_370$GSAT_2300, col = colors[4], border = "black", add = TRUE)
+hist(param_585$GSAT_2300, col = colors[5], border = "black", add = TRUE)
+
+# Add a legend
+legend("topright", 
+       legend = c("Data1", "Data2", "Data3", "Data4", "Data5"), 
+       fill = colors, 
+       border = "black")
+
+
 
 mh119_mom <- lapply(1L:r, function(j) {predict(emu[[j]], param_119, type = "moments")}) 
 mh119_mean <- matrix( unlist(lapply(mh119_mom, function(j) j[c('mean')])), ncol=r)
