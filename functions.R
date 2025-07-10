@@ -1,13 +1,21 @@
 ## load all packages
 source("./shared.R")
 
-## set threshold for svd
-thresh <- 0.999
-source("jointemu_svd.R")
+## plot controls
+plot_sea_level_timeseries <- TRUE #plot timeseries of sea level rise, relative to 2000, for all simulations, coloured by scenario
+plot_loocv                <- TRUE #make plots of loocv at timeslices 2100, 2150, 2200, 2300
+plot_meff                 <- TRUE #make plots of the main effects curves at 2300
 
-## save validation plots?
-save_valid <- FALSE
-source("loocvandmeff.R")
+## Preprocess the data, do the SVD and build the emulators
+thresh <- 0.999
+source("preprocess_SVD_emulate.R") #pre-process the data, do the SVD, and build the emulators
+
+## Do the loocv and main effects
+save_valid <- FALSE #flag to save the validation plots
+n_loocv <- 100      #number of leave one out cross validation points to output
+output_loocv_data <- FALSE #output the leave out of out cross validation data 
+output_meff_data  <- TRUE  #output the main effects data
+source("loocv_and_meff.R")
 
 ## save predictions?
 save_pred <- FALSE

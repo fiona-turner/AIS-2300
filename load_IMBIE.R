@@ -1,3 +1,7 @@
+## Load in the IMBIE data. Returns obs and sig, which are the observed sea level
+## rise anomalies and errors in this for 5 year periods, between 1980 and 2020.
+##
+##
 ## From Ines:
 ## To calculate the uncertainties on the five-year averages from Table 2, 
 ## we take the mean error and divide it by the square root of the number of years: 
@@ -5,7 +9,8 @@
 ## MEAN(mb_sigma[ok_time])/SQRT(delta_years) = 88 / 2.2 = 40
 
 
-IMBIE <- fread("./calibration-data/IMBIE/2022/imbie_antarctica_2022_Gt.csv")
+#IMBIE <- fread("./calibration-data/IMBIE/2022/imbie_antarctica_2022_Gt.csv")
+IMBIE <- fread("./calibration-data/IMBIE/imbie3_December24/imbie3_antarctica_partitioned_Gt.csv")
 
 ## set relative to 2000 to match our model
 IMBIE$`Mass balance (Gt/yr)` <- IMBIE$`Mass balance (Gt/yr)` - mean(IMBIE$`Mass balance (Gt/yr)`[IMBIE$Year >= 2000 & IMBIE$Year < 2001])
@@ -14,9 +19,9 @@ IMBIE$`Mass balance (Gt/yr)` <- IMBIE$`Mass balance (Gt/yr)` - mean(IMBIE$`Mass 
 post <- 1975 + c(5, seq(from = 10, to = 45, by = 5))
 kk <- length(post) - 1 # number of bins
 
-bins <- findInterval(IMBIE$Year, post, rightmost.closed = TRUE)
+bins <- findInterval(IMBIE$Year, post, rightmost.closed = TRUE) #say which bin the 
 
-## means of obs within relative bins
+## means of obs within relative bins (remember relative to 2000)
 obs <- sapply(1L:kk, function(i) {
   mean(IMBIE$`Mass balance (Gt/yr)`[ bins == i,drop=FALSE])
 })

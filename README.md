@@ -4,6 +4,10 @@
 Given 1400 simulations of two AIS models, Kori and PISM, we build a random forest emulator, creating a linear regression using perturbed parameters and a RF for the residual.
 Output of model is time series of SLE, 1950 - 2300. In order to emulate whole time series at once, we use singular value decomposition to transform 350-year data (made of 70 5-year timeslices) to *r* components, were *r* is the number of components that represent >99% of variance within the data.
 
+## Input data
+SLE_SIMULATIONS_AIS_final_230725.csv: data on the simulations, 22 columns of metadata, followed by 351 years of model output yearly from 1950 to 2300 (= 373 columns total). 2200 simulations in total, one for each row.  
+CLIMATE_FORCING_240127.csv: #data on the GCMS, size 86 x 456. First five columns are metadata, then 451 year observations of temperature from 1850 to 2300 (=456 columns total). 86 GCMs in total.  
+
 ## Prerequisites 
 Install required packages:
 

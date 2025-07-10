@@ -1,0 +1,76 @@
+## load all packages
+source("./shared.R")
+
+## plot controls
+plot_sea_level_timeseries <- TRUE #plot timeseries of sea level rise, relative to 2000, for all simulations, coloured by scenario
+plot_loocv                <- FALSE #make plots of loocv at timeslices 2100, 2150, 2200, 2300
+plot_meff                 <- FALSE #make plots of the main effects curves at 2300
+
+## Preprocess the data, do the SVD and build the emulators
+thresh <- 0.999
+source("preprocess_SVD_emulate.R") #pre-process the data, do the SVD, and build the emulators. Sometimes you have to run this twice (doesn't work first time around?) and I have no idea why...
+
+## Do the loocv and main effects
+save_valid <- FALSE #flag to save the validation plots
+n_loocv <- 100      #number of leave one out cross validation points to output
+output_loocv_data <- TRUE #output the leave out of out cross validation data 
+source("loocv.R") #need to run this to bring the nominal values into scope (used to initialise the mcmc)
+
+## load in the calibration data
+source("load_IMBIE.R")
+
+
+## MCMC
+
+# set step size and bounds on variables
+
+# step sizes
+lapse_rate_step_size <- 0.1
+refreeze_step_size   <- 0.1
+refreeze_frac_step_size <- 0.01
+PDD_ice_step_size    <- 0.1
+PDD_snow_step_size   <- 0.1
+heat_flux_Burgard_step_size <- 1*10**-05
+heat_flux_ISMIP6_nonlocal_step_size <- 1*10**3
+heat_flux_ISMIP6_nonlocal_slope_step_size <-  1*10**5
+heat_flux_PICO_step_size   <-  1*10**-6
+heat_flux_Plume_step_size  <-  1*10**-05
+GSAT_step_size             <-  1.0
+
+step_size <- c(lapse_rate_step_size, 
+               refreeze_step_size, 
+               refreeze_frac_step_size, 
+               PDD_ice_step_size, 
+               PDD_snow_step_size,
+               heat_flux_Burgard_step_size,
+               heat_flux_ISMIP6_nonlocal_step_size,
+               heat_flux_ISMIP6_nonlocal_slope_step_size,
+               heat_flux_PICO_step_size,
+               heat_flux_Plume_step_size,
+               GSAT_step_size)
+
+
+# other mcmc parameters
+fac <- 0 #how many times larger is the model error than obs error
+obs_sig <- sig #just rename 
+chain_length <- 1100 #length of the MCMC
+burn_in <- 101 #burn in period
+
+source("run_mcmc.R") #brings the function mh_calib to run the mcmc into scope
+
+mh <- mh_calib(obs, obs_sig, fac, step_size, chain_length, burn_in)
+
+#output the results of the calibration 
+write.csv(mh$posterior_samples, "outputs/mcmc_output_data/mcmc_output_posteriorsamples.csv", row.names = FALSE)
+write.csv(mh$posterior_trajectories, "outputs/mcmc_output_data/mcmc_output_posteriortrajectories.csv", row.names = FALSE)
+write.csv(mh$posterior_trajectories_ssp119, "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp119.csv", row.names = FALSE)
+write.csv(mh$posterior_trajectories_ssp126, "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp126.csv", row.names = FALSE)
+write.csv(mh$posterior_trajectories_ssp245, "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp245.csv", row.names = FALSE)
+write.csv(mh$posterior_trajectories_ssp370, "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp370.csv", row.names = FALSE)
+write.csv(mh$posterior_trajectories_ssp585, "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp585.csv", row.names = FALSE)
+
+#run the MEFF
+source("meff.R")
+
+
+
