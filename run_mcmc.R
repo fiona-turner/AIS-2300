@@ -44,6 +44,21 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
 #  #if using scenario then would set to a random sample from tmp
   
   #set variables to initial values
+  GSAT_2300_nom         <- mean(X$GSAT_2300)
+  simoc_nom             <- unique(X$simoc)[1]
+  init_atmos_nom        <- unique(X$init_atmos)[1]
+  lapse_rate_nom        <- -8.2
+  refreeze_nom          <- 5
+  refreeze_frac_nom     <- 0.5
+  PDD_ice_nom           <- 8
+  PDD_snow_nom          <- 3
+  melt_param_nom        <- unique(X$melt_param)[2]
+  heat_flux_Burgard_nom <- 5*10**-4
+  heat_flux_ISMIP6_nonlocal_nom <- 1.45*10**4
+  heat_flux_ISMIP6_nonlocal_slope_nom <- 2.06*10**6
+  heat_flux_PICO_nom    <- 4*10**-5
+  heat_flux_Plume_nom   <- 5.9*10**-4
+  
   simoc <- unique(X$simoc)[1]
   init_atmos <- unique(X$init_atmos)[1]
   lapse_rate <- lapse_rate_nom[1]
@@ -75,7 +90,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
     melt_param = sample(unique(X$melt_param), 1, TRUE)
     
     ### perturb values for the continuous variables
-    lapse_rate = as.numeric(current_state['lapse_rate']) + rnorm(1, mean = 0, sd = step_size[1])
+    lapse_rate <- as.numeric(current_state['lapse_rate']) + rnorm(1, mean = 0, sd = step_size[1])
 #    if (lapse_rate < -12){
 #      lapse_rate = -12
 #    } else if (lapse_rate > -5){
@@ -211,33 +226,27 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
     #variance set to obs error, obs_sig, plus a model error, set to fac*obs_sig
     
     #old way
-    #current_likelihood <- exp(-0.5*sum((obs - current_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(current_varx)[6:13]))))
+    current_likelihood <- exp(-0.5*sum((obs - current_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(current_varx)[6:13]))))
     
-    #new way
-    M_current = diag(obs_sig) + fac*diag(obs_sig) + current_varx[6:13, 6:13] #covariance matrix 
-    current_obs_emu_diff <- (obs - current_meanx[6:13])
-    current_obs_emu_diff <- matrix(current_obs_emu_diff, nrow = 1, ncol = length(current_obs_emu_diff))
-    current_loglikelihood <- current_obs_emu_diff %*% solve(M_current) %*% t(current_obs_emu_diff)
-   current_likelihood <- exp(-0.5*current_loglikelihood - 0.5*log(det(M_current))) 
+    #new way: including the covariances more carefully
+   # M_current = diag(obs_sig) + fac*diag(obs_sig) + current_varx[6:13, 6:13] #covariance matrix 
+   # current_obs_emu_diff <- (obs - current_meanx[6:13])
+  #  current_obs_emu_diff <- matrix(current_obs_emu_diff, nrow = 1, ncol = length(current_obs_emu_diff))
+  #  current_loglikelihood <- current_obs_emu_diff %*% solve(M_current) %*% t(current_obs_emu_diff)
+  # current_likelihood <- exp(-0.5*current_loglikelihood - 0.5*log(det(M_current))) 
    # current_likelihood <- exp(-0.5*current_loglikelihood) 
-    
-    #take out all emulator uncertainty
-    #current_likelihood <- exp(-0.5*sum((obs - current_meanx[6:13])**2/((obs_sig + fac*obs_sig ))))
-    
+
     #proposed likelihood
-    #proposed_likelihood <- exp(-0.5*sum((obs - proposed_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(proposed_varx)[6:13]))))
+    proposed_likelihood <- exp(-0.5*sum((obs - proposed_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(proposed_varx)[6:13]))))
     
-    
-    M_proposed = diag(obs_sig) + fac*diag(obs_sig) + proposed_varx[6:13, 6:13] #covariance matrix 
-    proposed_obs_emu_diff <- (obs - proposed_meanx[6:13])
-    proposed_obs_emu_diff <- matrix(proposed_obs_emu_diff, nrow = 1, ncol = length(proposed_obs_emu_diff))
-    proposed_loglikelihood <- proposed_obs_emu_diff %*% solve(M_proposed) %*% t(proposed_obs_emu_diff)
-    proposed_likelihood <- exp(-0.5*proposed_loglikelihood - 0.5*log(det(M_proposed)))
-   # proposed_likelihood <- exp(-0.5*proposed_loglikelihood)
-    
-    #take out all emulator uncertainty
-    #proposed_likelihood <- exp(-0.5*sum((obs -  proposed_meanx[6:13])**2/((obs_sig + fac*obs_sig ))))
-    
+    #including the covariances more carefully
+    #M_proposed = diag(obs_sig) + fac*diag(obs_sig) + proposed_varx[6:13, 6:13] #covariance matrix 
+    #proposed_obs_emu_diff <- (obs - proposed_meanx[6:13])
+    #proposed_obs_emu_diff <- matrix(proposed_obs_emu_diff, nrow = 1, ncol = length(proposed_obs_emu_diff))
+    #proposed_loglikelihood <- proposed_obs_emu_diff %*% solve(M_proposed) %*% t(proposed_obs_emu_diff)
+    #proposed_likelihood <- exp(-0.5*proposed_loglikelihood - 0.5*log(det(M_proposed)))
+
+
     #metropolis ratio
     alpha <- min(1, proposed_likelihood / current_likelihood)
     

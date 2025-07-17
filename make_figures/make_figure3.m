@@ -12,7 +12,7 @@ col_headers = ["\Delta GSAT (C)","simoc","init atmos","lapse rate (C/km)","refre
 isplot = [1,4,5,6,7,8,10,11,12,13,14]; 
 
 % set up plot
-figure(1);clf;
+fig = figure(1);clf;
 
 for i = 1:11
     ax(i) = subplot(3,4,i);
@@ -23,6 +23,7 @@ for i = 1:11
     ax(i).YLabel.String = 'density';
    % ax(i).XLabel.Interpreter = 'none';
 end
+fig.Position(3:4) = [1300, 740];
 %% Add the priors 
 range_GSAT       = [-0.297,12.042];
 range_lapse_rate = [-12, -5];
@@ -53,7 +54,6 @@ end
 %% Load in the data
 
 mcmc_output = readmatrix("../outputs/mcmc_output_data/mcmc_output_posteriorsamples.csv");
-
 mcmc_output = mcmc_output(:,isplot); %remove the unwanted columns
 
 pcol = [0.5, 0, 0.5];
@@ -70,3 +70,31 @@ ax(8).XLim = [0, 0.0011];
 ax(9).XLim = [0.00005, 0.00105];
 ax(10).XLim = [8500, 41500];
 ax(11).XLim = 1e6*[0.85, 4.13];
+
+% %% add the prior histograms from simulations
+% prior = readmatrix("../SLE_SIMULATIONS_AIS_final_230725.csv");
+% prior = prior(801:end, :); %phase 2 only
+% 
+% 
+% lapse_rate_prior = prior(:,13);
+% histogram(ax(2), lapse_rate_prior,20, 'Normalization','pdf');
+% 
+% histogram(ax(3), prior(:,14),20, 'Normalization','pdf');
+% histogram(ax(4), prior(:,15),20, 'Normalization','pdf');
+% histogram(ax(5), prior(:,16),20, 'Normalization','pdf');
+% histogram(ax(6), prior(:,17),20, 'Normalization','pdf');
+% histogram(ax(7), prior(:,18),20, 'Normalization','pdf');
+% histogram(ax(8), prior(:,19),20, 'Normalization','pdf');
+% histogram(ax(9), prior(:,20),20, 'Normalization','pdf');
+% histogram(ax(10), prior(:,21),20, 'Normalization','pdf');
+% histogram(ax(11), prior(:,22),20, 'Normalization','pdf');
+
+
+%% add the sampled prior
+prior_params = readmatrix("../outputs/mcmc_output_data/priorparameters.csv");
+prior_params = prior_params(:,isplot); %remove the unwanted columns
+
+pcols2 = [0, 0.5, 0.5];
+for i = 1:11
+    histogram(ax(i), prior_params(:,i),20, 'Normalization','pdf', 'FaceColor', pcols2);
+end
