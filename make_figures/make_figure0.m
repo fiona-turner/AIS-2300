@@ -6,7 +6,7 @@
 %% Preliminaries
 addpath('..')
 fig = figure(5); clf; hold on
-
+fig.Position(3:4) = [680, 420];
 ax = gca;
 ax.FontSize = 14;
 
@@ -22,10 +22,21 @@ prior_col = aa(1,:);
 post_col = aa(2,:);
 imbiecol = [0,0,0]; %colour for the IMBIE plot
 
+ub_level = 83;
+lb_level = 17; %set levels for upper and lower bounds
 
+show_sims = 0; %flag to show the individual simulations
+% if ~show_sims
+%     prior_col = [0,47,167]/255;
+%     post_col  = [167,0,47]/255;
+% 
+% end
 
+s_alpha = 0.2; %alpha for the prior/post shading
 %% Add individual simulation lines
-if 1
+if show_sims
+lalpha = 0.1; %set the alpha for these lines
+
 simulations = readtable("../SLE_SIMULATIONS_AIS_final_230725.csv");
 simulations_meta = simulations(801:end,1:22); %meta data
 simulations = table2array(simulations(801:end,23:end)); %start at 802 for only phase 2 sims
@@ -40,8 +51,6 @@ simulations_mb = -simulations*362.5*1000;
 simulations_kori_mb = simulations_mb(1:800,:);
 simulations_pism_mb = simulations_mb(801:end,:);
 
-
-lalpha = 0.2;
 
 
 for i = 1:length(simulations_kori_mb)
@@ -106,8 +115,9 @@ slr_1979 = repmat(prior(:,idx), [1,70]); %matrix with repeated entries correspon
 prior = prior - slr_1979;
 
 prior_mean  = prctile(prior,50,1);
-prior_erru  = prctile(prior,95,1); %sets the shaded area
-prior_errl  = prctile(prior,5,1); %sets the shaded area
+
+prior_erru  = prctile(prior,ub_level,1); %sets the shaded area
+prior_errl  = prctile(prior,lb_level,1); %sets the shaded area
 
 % 
 prior_mean_mb = -prior_mean * (362.5*1000);
@@ -121,11 +131,11 @@ fill(xf, yf, prior_col, 'LineStyle','none', 'FaceAlpha',0.25, 'HandleVisibility'
 plot(prior_time, prior_mean_mb,'color',  prior_col, 'LineWidth',2)
 
 %% add the posterior
-posterior = readmatrix("../outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp119.csv");
+posterior = readmatrix("../outputs/mcmc_output_data/mcmc_output_posteriortrajectories.csv");
 posterior_time = 1955:5:2300;
 
 nmax = length(posterior);
-nmax = 14000;
+%nmax = 2000;
 posterior = posterior(1:nmax, :); %remove final rows
 % rebase
 
@@ -134,8 +144,9 @@ slr_1979 = repmat(posterior(:,idx), [1,70]); %matrix with repeated entries corre
 posterior = posterior - slr_1979;
 
 posterior_mean  = prctile(posterior,50,1);
-posterior_erru  = prctile(posterior,95,1); %sets the shaded area
-posterior_errl  = prctile(posterior,5,1); %sets the shaded area
+%posterior_mean  = mean(posterior,1);
+posterior_erru  = prctile(posterior,ub_level,1); %sets the shaded area
+posterior_errl  = prctile(posterior,lb_level,1); %sets the shaded area
 
 % 
 posterior_mean_mb = -posterior_mean * (362.5*1000);
@@ -145,7 +156,7 @@ posterior_erru_mb = -posterior_erru*(362.5*1000);
 % %plot
 xf = [posterior_time, flip(posterior_time)];
 yf = [posterior_errl_mb, flip(posterior_erru_mb)];
-fill(xf, yf, post_col, 'LineStyle','none', 'FaceAlpha',0.2, 'HandleVisibility','off');
+fill(xf, yf, post_col, 'LineStyle','none', 'FaceAlpha',s_alpha, 'HandleVisibility','off');
 plot(posterior_time, posterior_mean_mb,'color',  post_col, 'LineWidth',2)
 xlim([1979, 2022])
 
@@ -161,14 +172,14 @@ imbie_time                     = imbie_data(:,1);
 
 xf = [imbie_time; flip(imbie_time)];
 yf = [imbie_mass_balance - imbie_mass_balance_uncertainty; flip(imbie_mass_balance + imbie_mass_balance_uncertainty)];
-fill(xf, yf, imbiecol, 'LineStyle','none', 'FaceAlpha',0.2, 'HandleVisibility','off');
+fill(xf, yf, imbiecol, 'LineStyle','none', 'FaceAlpha',s_alpha, 'HandleVisibility','off');
 
 plot(imbie_time, imbie_mass_balance, 'LineWidth',  2, 'Color',imbiecol)
 
 %% Tidy stuff
 axl = gca;
-yll =  [  -80000       25000]; %for macro
-yll =  [  -5000       1000]; %for micro
+yll =  [  -80000       15000]; %for macro
+yll =  [  -10000       5000]; %for micro
 axl.YLim = yll;
 yticks_left = get(gca, 'YTick');
 
@@ -187,4 +198,8 @@ yticks_right = 1/(362.5) * yticks_left;
 axr.YTickLabel = compose('%.1f', yticks_right);
 
 axr.YLabel.String = 'SLE (mm)';
-legend({'PISM', "KORI",  "Prior", "Posterior","IMBIE"}, 'location', 'SouthWest')
+if show_sims
+    legend({'PISM', "KORI",  "Prior", "Posterior","IMBIE"}, 'location', 'SouthWest')
+else
+    legend({"Prior", "Posterior","IMBIE"}, 'location', 'SouthWest')
+end

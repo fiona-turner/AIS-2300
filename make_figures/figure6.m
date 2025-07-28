@@ -1,4 +1,4 @@
-% Make figure 1 of the manuscript showing trajectories of SLR to (a) 2100
+% Make figure 6 of the manuscript showing trajectories of SLR to (a) 2100
 % and (c) 2300. Also show distributions of SLR at the respective times at
 % the right hand side
 %
@@ -19,6 +19,7 @@ for i = 1:4
     box(ax(i), 'on');
     hold(ax(i), 'on');
     ax(i).FontSize = 14;
+    %grid(ax(i), 'on')
 end
 
 ax(1).XLabel.String = 'year';
@@ -75,6 +76,10 @@ plot(ax(4),xi2100, f2100,"Color",pcol, 'LineWidth',1.5 );
 
 %% Add the scenarios
 count = 1;
+prctile_yrs    = [2100, 2200, 2300];
+prctile_med    = nan(5, length(prctile_yrs));
+prctile_17    = nan(5, length(prctile_yrs));
+prctile_83    =  nan(5, length(prctile_yrs));
 for ssp = ["119", "126", "245", "370", "585"]
     mcmc_output = readmatrix(strcat("../outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp",ssp,".csv"));
     posterior_central = mean(mcmc_output, 1);
@@ -100,9 +105,26 @@ for ssp = ["119", "126", "245", "370", "585"]
     plot(ax(2),xi2300, f2300,"Color", scen_col(count,:), 'LineWidth',1.5 );
     plot(ax(4),xi2100, f2100,"Color", scen_col(count,:), 'LineWidth',1.5 );
 
+    %store the percentiles at different times
+    for iy = 1:length(prctile_yrs)
+        [~,idx] = min(abs(tt - prctile_yrs(iy)));
+        slr_yr = mcmc_output(:,idx);
+        prctile_med(count, iy) = prctile(slr_yr,50,1);
+        prctile_17(count, iy) = prctile(slr_yr,17,1);
+        prctile_83(count, iy) = prctile(slr_yr,83,1);
+        fprintf(ssp)
+        fprintf("\n")
+        fprintf("projection for the year %.0f is %.2f [%.2f, %.2f] \n", prctile_yrs(iy), prctile_med(count, iy), prctile_17(count, iy),prctile_83(count, iy))
+        
+
+    end
+
+
+
     count = count + 1;
 
 
+    %
 end
 
 

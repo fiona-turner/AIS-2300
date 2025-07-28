@@ -53,12 +53,13 @@ step_size <- c(lapse_rate_step_size,
 # other mcmc parameters
 fac <- 5 #how many times larger is the model error than obs error
 obs_sig <- sig #just rename bc why not
-chain_length <- 21000 #length of the MCMC
+chain_length <- 31000 #length of the MCMC
 burn_in <- 1001 #burn in period
+write_as_you_go <- TRUE #flag to write the output every 100 steps
 
 source("run_mcmc.R") #brings the function mh_calib to run the mcmc into scope
 
-mh <- mh_calib(obs, obs_sig, fac, step_size, chain_length, burn_in)
+mh <- mh_calib(obs, obs_sig, fac, step_size, chain_length, burn_in,write_as_you_go)
 
 #output the results of the calibration 
 write.csv(mh$posterior_samples, "outputs/mcmc_output_data/mcmc_output_posteriorsamples.csv", row.names = FALSE)
@@ -107,7 +108,7 @@ for (i in 1:nprior){
   prior_slr_trajectories[i,] <- prior_current_meanx
 }
 write.csv(prior_slr_trajectories, "outputs/mcmc_output_data/priortrajectories.csv", row.names = FALSE)
-
+write.csv(prior_params, "outputs/mcmc_output_data/priorparameters.csv", row.names = FALSE)
 
 
 #run the MEFF

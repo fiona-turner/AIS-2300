@@ -1,4 +1,4 @@
-%Make figure 3 of the ms showing the prior and posterior distributions of
+%Make figure 5 of the ms showing the prior and posterior distributions of
 %model parameters
 %
 % 18/06/25, ATB (alex.bradley@kcl.ac.uk). MIT license.
@@ -105,4 +105,23 @@ for i = 1:11
     plot(ax(i), ranges(i,:), heights_of_priors(i)*[1,1], 'k', 'LineWidth',1.5);
     plot(ax(i), ranges(i,1)*[1,1], [0,heights_of_priors(i)], 'k--', 'linewidth', 1.5 );
     plot(ax(i), ranges(i,2)*[1,1], [0,heights_of_priors(i)], 'k--', 'linewidth', 1.5 );
+end
+
+%% Add the distributions of SSP in panel a
+
+
+scen_col = [136, 189, 181;
+    34, 50, 81;
+    231, 222, 92;
+    221, 52, 39;
+    121, 26, 36]/255;
+count = 1;
+for ssp = ["119", "126", "245", "370", "585"]
+    fairpath = strcat("../FAIR_data/ssp", ssp, ".temperature.fair.temperature_climate.nc");
+    fair_years = ncread(fairpath, 'year');
+    fair_temps = ncread(fairpath, strcat("/ssp",ssp,"/surface_temperature"));
+    fair_temps_2300 = fair_temps(:,end);    
+    [f, xi] = ksdensity(fair_temps_2300);
+    plot(ax(1), xi, f/3, 'Color',scen_col(count, :), 'LineWidth',1.5);
+    count = count + 1;
 end

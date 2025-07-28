@@ -14,6 +14,7 @@ IMBIE <- fread("./calibration-data/IMBIE/imbie3_December24/imbie3_antarctica_par
 
 ## set relative to 2000 to match our model
 IMBIE$`Mass balance (Gt/yr)` <- IMBIE$`Mass balance (Gt/yr)` - mean(IMBIE$`Mass balance (Gt/yr)`[IMBIE$Year >= 2000 & IMBIE$Year < 2001])
+IMBIE$`Cumulative mass balance anomaly (Gt)` <- IMBIE$`Cumulative mass balance anomaly (Gt)` - mean(IMBIE$`Cumulative mass balance anomaly (Gt)`[IMBIE$Year >= 2000 & IMBIE$Year < 2001])
 
 ## set up bins for averaging over the five year our model uses
 post <- 1975 + c(5, seq(from = 10, to = 45, by = 5))
@@ -22,14 +23,23 @@ kk <- length(post) - 1 # number of bins
 bins <- findInterval(IMBIE$Year, post, rightmost.closed = TRUE) #say which bin the 
 
 ## means of obs within relative bins (remember relative to 2000)
-obs <- sapply(1L:kk, function(i) {
-  mean(IMBIE$`Mass balance (Gt/yr)`[ bins == i,drop=FALSE])
+#obs <- sapply(1L:kk, function(i) {
+#  mean(IMBIE$`Mass balance (Gt/yr)`[ bins == i,drop=FALSE])
+#})
+
+obs <- -1*sapply(1L:kk, function(i) {
+  mean(IMBIE$`Cumulative mass balance anomaly (Gt)`[ bins == i,drop=FALSE])
 })
 
 ## using Ines' uncertainty calculation: mean(uncertainty)/sqrt(no. of years)
 sig <- sapply(1L:kk, function(i) {
-  mean(IMBIE$`Mass balance uncertainty (Gt/yr)`[ bins == i,drop=FALSE])/(sqrt(length(bins[bins == i])/12))
+  mean(IMBIE$`Cumulative mass balance anomaly uncertainty (Gt)`[ bins == i,drop=FALSE])/(sqrt(length(bins[bins == i])/12))
 })
+
+#sig <- sapply(1L:kk, function(i) 
+#  mean(IMBIE$`Mass balance uncertainty (Gt/yr)`[ bins == i,drop=FALSE])/(sqrt(length(bins[bins == i])/12))
+#})
+
 
 ## convert from Gt SLE to m SLE
 obs <- obs/(362.5*1000)

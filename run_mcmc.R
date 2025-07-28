@@ -1,6 +1,6 @@
 ## Run the mcmc. Define a function mh_calib which returns posterior samples and then call this function 
 
-mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds){
+mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds, write_as_you_go){
   ## a function to run Metropolis-Hastings on the random forest emulator
   # inputs:
   # obs = the observations to be used in the likelihood calculation
@@ -226,7 +226,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
     #variance set to obs error, obs_sig, plus a model error, set to fac*obs_sig
     
     #old way
-    current_likelihood <- exp(-0.5*sum((obs - current_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(current_varx)[6:13]))))
+    current_likelihood <- 1/sqrt(prod(obs_sig**2 + fac*obs_sig**2 + diag(current_varx)[6:13])) * exp(-0.5*sum((obs - current_meanx[6:13])**2/((obs_sig**2 + fac*obs_sig**2 + diag(current_varx)[6:13]))))
     
     #new way: including the covariances more carefully
    # M_current = diag(obs_sig) + fac*diag(obs_sig) + current_varx[6:13, 6:13] #covariance matrix 
@@ -237,7 +237,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
    # current_likelihood <- exp(-0.5*current_loglikelihood) 
 
     #proposed likelihood
-    proposed_likelihood <- exp(-0.5*sum((obs - proposed_meanx[6:13])**2/((obs_sig + fac*obs_sig + diag(proposed_varx)[6:13]))))
+    proposed_likelihood <- 1/sqrt(prod(obs_sig**2 + fac*obs_sig**2 + diag(proposed_varx)[6:13])) * exp(-0.5*sum((obs - proposed_meanx[6:13])**2/((obs_sig**2 + fac*obs_sig**2 + diag(proposed_varx)[6:13]))))
     
     #including the covariances more carefully
     #M_proposed = diag(obs_sig) + fac*diag(obs_sig) + proposed_varx[6:13, 6:13] #covariance matrix 
@@ -364,6 +364,13 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
     
     if (i %% 100 == 0) {
       print(i)
+      write.csv(na.omit(samples), "outputs/mcmc_output_data/mcmc_output_posteriorsamples.csv", row.names = FALSE)
+      write.csv(na.omit(slr_trajectories), "outputs/mcmc_output_data/mcmc_output_posteriortrajectories.csv", row.names = FALSE)
+      write.csv(na.omit(slr_trajectories_ssp119), "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp119.csv", row.names = FALSE)
+      write.csv(na.omit(slr_trajectories_ssp126), "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp126.csv", row.names = FALSE)
+      write.csv(na.omit(slr_trajectories_ssp245), "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp245.csv", row.names = FALSE)
+      write.csv(na.omit(slr_trajectories_ssp370), "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp370.csv", row.names = FALSE)
+      write.csv(na.omit(slr_trajectories_ssp585), "outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp585.csv", row.names = FALSE)
     }
     
     

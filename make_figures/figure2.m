@@ -1,6 +1,7 @@
-% Make supplementary figure 1 showing the simulated vs emulated predictions
+% Make figure 2 showing the simulated vs emulated predictions
 % of SLR at 2100, 2150, 2200, 2300
 %
+% 26/7/25, ATB. alex.bradley@kcl.ac.uk. MIT license.
 %% Preliminaries
 %
 fig = figure(1); clf;
