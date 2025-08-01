@@ -51,7 +51,7 @@ coverages = nan(4,n);
 for i = 1:4
     [~,idx] = min(abs(years - times(i)));
 
-        plot(ax(i), xl(i,:), xl(i,:), 'k--', 'LineWidth',1.5)
+    plot(ax(i), xl(i,:), xl(i,:), 'k--', 'LineWidth',1.5)
 
     for j = 1:n
 
