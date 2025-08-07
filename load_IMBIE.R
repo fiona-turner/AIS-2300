@@ -10,7 +10,8 @@
 
 
 #IMBIE <- fread("./calibration-data/IMBIE/2022/imbie_antarctica_2022_Gt.csv")
-IMBIE <- fread("./calibration-data/IMBIE/imbie3_December24/imbie3_antarctica_partitioned_Gt.csv")
+#IMBIE <- fread("./calibration-data/IMBIE/imbie3_December24/imbie3_antarctica_partitioned_Gt.csv")
+IMBIE <- fread("./calibration-data/IMBIE/imbie3_July25/imbie3_antarctica_Gt_partitioned.csv")
 
 ## set relative to 2000 to match our model
 IMBIE$`Mass balance (Gt/yr)` <- IMBIE$`Mass balance (Gt/yr)` - mean(IMBIE$`Mass balance (Gt/yr)`[IMBIE$Year >= 2000 & IMBIE$Year < 2001])

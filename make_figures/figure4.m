@@ -110,6 +110,7 @@ posterior_erru_mb = -posterior_erru*(362.5*1000);
 
 %% Observations
 fname =  "../calibration-data/IMBIE/imbie3_December24/imbie3_antarctica_partitioned_Gt.csv";
+fname =  "../calibration-data/IMBIE/imbie3_July25/imbie3_antarctica_Gt_partitioned.csv";
 
 imbie_data = readmatrix(fname);
 imbie_mass_balance             = imbie_data(:,4);
