@@ -19,7 +19,6 @@ message("running meff")
 ## PDD_ice : 8
 ## PDD_snow : 3
 ## melt_param : PICO (bc it's the only shared melt_param between simus)
-## heat_flux_Burgard : 5*10**-4
 ## heat_flux_ISMIP6_nonlocal : 1.45*10**4
 ## heat_flux_ISMIP6_nonlocal_slope : 2.06*10**6
 ## heat_flux_PICO : 1§§ 4*10*-5 (as simoc is Kori_ISMIP6_3D)
@@ -37,7 +36,6 @@ refreeze_frac_nom     <- rep(0.5, length(GSAT_2300_nom))
 PDD_ice_nom           <- rep(8, length(GSAT_2300_nom))
 PDD_snow_nom          <- rep(3, length(GSAT_2300_nom))
 melt_param_nom        <- rep(unique(X$melt_param)[2], length(GSAT_2300_nom))
-heat_flux_Burgard_nom <- rep(5*10**-4, length(GSAT_2300_nom))
 heat_flux_ISMIP6_nonlocal_nom <- rep(1.45*10**4, length(GSAT_2300_nom))
 heat_flux_ISMIP6_nonlocal_slope_nom <- rep(2.06*10**6, length(GSAT_2300_nom))
 heat_flux_PICO_nom    <- rep(4*10**-5, length(GSAT_2300_nom))
@@ -53,7 +51,7 @@ GSAT_2300_samp <- seq(min(X$GSAT), max(X$GSAT), length.out = length(GSAT_2300_no
 
 
 predGSAT <- as.list(data.frame(GSAT_2300_samp, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predGSAT)){
@@ -91,7 +89,7 @@ write.csv(years,  "outputs/meff/GSAT_2300/years.csv", row.names = FALSE)
 ########## MEFF for lapse_rate
 lapse_rate_samp <- sort(runif(length(GSAT_2300_nom), -12, -5))
 predlapse <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_samp, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predlapse)){
   names(predlapse)[l] <-  sub("_samp", "", names(predlapse)[l])
@@ -128,7 +126,7 @@ write.csv(years,  "outputs/meff/lapse_rate/years.csv", row.names = FALSE)
 ########## MEFF for refreeze
 refreeze_samp <- sort(runif(length(GSAT_2300_nom), 0, 15))
 predrefreeze <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_samp, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                   heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                   heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predrefreeze)){
   names(predrefreeze)[l] <-  sub("_samp", "", names(predrefreeze)[l])
@@ -166,7 +164,7 @@ write.csv(years,  "outputs/meff/refreeze/years.csv", row.names = FALSE)
 ########## MEFF for refreeze_frac
 refreeze_frac_samp <- sort(runif(length(GSAT_2300_nom), 0.2, 0.8))
 predfrac <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_samp, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predfrac)){
   names(predfrac)[l] <-  sub("_samp", "", names(predfrac)[l])
@@ -204,7 +202,7 @@ write.csv(years,  "outputs/meff/refreeze_frac/years.csv", row.names = FALSE)
 ########## MEFF for PDD_ice
 PDD_ice_samp <- sort(runif(length(GSAT_2300_nom), 4, 12))
 predice <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_samp, PDD_snow_nom, melt_param_nom, 
-                              heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                              heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predice)){
   names(predice)[l] <-  sub("_samp", "", names(predice)[l])
@@ -241,7 +239,7 @@ write.csv(years,  "outputs/meff/PDD_ice/years.csv", row.names = FALSE)
 ########## MEFF for PDD_snow
 PDD_snow_samp <- sort(runif(length(GSAT_2300_nom), 0, 6))
 predsnow <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_samp, melt_param_nom, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predsnow)){
   names(predsnow)[l] <-  sub("_samp", "", names(predsnow[l]))
@@ -278,7 +276,7 @@ write.csv(years,  "outputs/meff/PDD_snow/years.csv", row.names = FALSE)
 ########## MEFF for heat_flux_PICO
 heat_flux_PICO_samp <- sort(runif(length(GSAT_2300_nom), 0.1*10**-5, 10*10**-5))
 predPICO <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                               heat_flux_PICO_samp, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_samp, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predPICO)){
   names(predPICO)[l] <-  sub("_samp", "", names(predPICO[l]))
@@ -315,7 +313,7 @@ write.csv(years,  "outputs/meff/heat_flux_PICO/years.csv", row.names = FALSE)
 ########## MEFF for heat_flux_Plume
 heat_flux_Plume_samp <- sort(runif(length(GSAT_2300_nom), 1*10**-4, 10*10**-4))
 predPlume <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_samp, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_samp, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predPlume)){
   names(predPlume)[l] <-  sub("_samp", "", names(predPlume[l]))
@@ -349,47 +347,11 @@ write.csv(heat_flux_Plume_samp,  "outputs/meff/heat_flux_plume/samples.csv", row
 write.csv(years,  "outputs/meff/heat_flux_plume/years.csv", row.names = FALSE)
 
 
-####### MEFF for heat_flux_Burgard
-heat_flux_Burgard_samp <- sort(runif(length(GSAT_2300_nom), 1*10**-4, 10*10**-4))
-predBurgard <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                  heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_samp, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
-## remove _samp and _nom or the predict function won't recognise the variables
-for ( l in 1:length(predBurgard)){
-  names(predBurgard)[l] <-  sub("_samp", "", names(predBurgard[l]))
-  names(predBurgard)[l] <-  sub("_nom", "", names(predBurgard[l]))
-}
-
-MEFF_Burgard <- lapply(1L:r, function(j) {predict(emu[[j]], predBurgard, type = "moments")}) 
-MEFF_Burgard_mean <- matrix( unlist(lapply(MEFF_Burgard, function(j) j[c('mean')])), ncol=r)
-MEFF_Burgard_sd <- matrix( unlist(lapply(MEFF_Burgard, function(j) j[c('sd')])), ncol=r)
-
-MEFF_Burgard_meanx <- sweep(MEFF_Burgard_mean %*% Vt, 2L, cc, "+")
-MEFF_Burgard_sdx <- t(sapply(1L:nrow(MEFF_Burgard_sd), function(i) {
-  sqrt(colSums((MEFF_Burgard_sd[i, ] * Vt)^2)) # n vector
-}))
-
-MEFF_Burgard_varx <- lapply(1L:nrow(MEFF_Burgard_sd), function(i) {
-  as.vector(crossprod(MEFF_Burgard_sd[i, ] * Vt)) 
-})
-MEFF_Burgard_varx <- do.call("cbind", MEFF_Burgard_varx) 
-dim(MEFF_Burgard_varx) <- c(n, n, nrow(MEFF_Burgard_sd))
-MEFF_Burgard_varx <- aperm(MEFF_Burgard_varx, c(3, 1, 2)) 
-
-#create upper and lower values (95% CI)
-MEFF_Burgard_upper <- MEFF_Burgard_meanx + 2*MEFF_Burgard_sdx
-MEFF_Burgard_lower <- MEFF_Burgard_meanx - 2*MEFF_Burgard_sdx
-
-# save this info
-write.csv(MEFF_Burgard_meanx, "outputs/meff/heat_flux_burgard/nominal_meff_meanx.csv", row.names = FALSE)
-write.csv(MEFF_Burgard_sdx,  "outputs/meff/heat_flux_burgard/nominal_meff_sdx.csv", row.names = FALSE)
-write.csv(heat_flux_Burgard_samp,  "outputs/meff/heat_flux_burgard/samples.csv", row.names = FALSE)
-write.csv(years,  "outputs/meff/heat_flux_burgard/years.csv", row.names = FALSE)
-
 
 ########## MEFF for heat_flux_ISMIP6_nonlocal
 heat_flux_ISMIP6_nonlocal_samp <- sort(runif(length(GSAT_2300_nom), 1*10**4, 4*10**4))
 predISMIP6 <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                 heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_samp, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                 heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_samp, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predISMIP6)){
   names(predISMIP6)[l] <-  sub("_samp", "", names(predISMIP6[l]))
@@ -425,7 +387,7 @@ write.csv(years,  "outputs/meff/heat_flux_ISMIP6/years.csv", row.names = FALSE)
 ########## MEFF for heat_flux_ISMIP6_nonlocal_slope
 heat_flux_ISMIP6_nonlocal_slope_samp <- sort(runif(length(GSAT_2300_nom), 1*10**6, 4*10**6))
 predISMIP6_slope <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                       heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_samp))
+                                       heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_samp))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predISMIP6_slope)){
   names(predISMIP6_slope)[l] <-  sub("_samp", "", names(predISMIP6_slope[l]))
@@ -464,7 +426,7 @@ write.csv(years,"outputs/meff/heat_flux_ISMIP6_slope/years.csv", row.names = FAL
 ######## MEFF for simoc
 simoc_samp <- sample(X$simoc, length(GSAT_2300_nom), TRUE)
 predsimoc <- as.list(data.frame(GSAT_2300_nom, simoc_samp, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predsimoc)){
   names(predsimoc)[l] <-  sub("_samp", "", names(predsimoc)[l])
@@ -496,7 +458,7 @@ MEFF_simoc_lower <- MEFF_simoc_meanx - 2*MEFF_simoc_sdx
 ########## MEFF for init_atmos
 init_atmos_samp <- sample(unique(X$init_atmos), length(GSAT_2300_nom), TRUE)
 predatmos <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_samp, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predatmos)){
   names(predatmos)[l] <-  sub("_samp", "", names(predatmos)[l])
@@ -527,7 +489,7 @@ MEFF_atmos_lower <- MEFF_atmos_meanx - 2*MEFF_atmos_sdx
 ########## MEFF for melt_param
 melt_param_samp <- sample(X$melt_param, length(GSAT_2300_nom), TRUE)
 predmelt <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_samp, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predmelt)){
   names(predmelt)[l] <-  sub("_samp", "", names(predmelt)[l])
@@ -567,7 +529,6 @@ refreeze_nom          <- rep(median(mh$posterior_samples$refreeze), length(GSAT_
 refreeze_frac_nom     <- rep(median(mh$posterior_samples$refreeze_frac), length(GSAT_2300_nom))
 PDD_ice_nom           <- rep(median(mh$posterior_samples$PDD_ice), length(GSAT_2300_nom))
 PDD_snow_nom          <- rep(median(mh$posterior_samples$PDD_snow), length(GSAT_2300_nom))
-heat_flux_Burgard_nom <- rep(median(mh$posterior_samples$heat_flux_Burgard), length(GSAT_2300_nom))
 heat_flux_ISMIP6_nonlocal_nom <- rep(median(mh$posterior_samples$heat_flux_ISMIP6_nonlocal), length(GSAT_2300_nom))
 heat_flux_ISMIP6_nonlocal_slope_nom <- rep(median(mh$posterior_samples$heat_flux_ISMIP6_nonlocal_slope), length(GSAT_2300_nom))
 heat_flux_PICO_nom    <- rep(median(mh$posterior_samples$heat_flux_PICO), length(GSAT_2300_nom))
@@ -588,7 +549,7 @@ GSAT_2300_samp <- seq(min(X$GSAT), max(X$GSAT), length.out = length(GSAT_2300_no
 
 
 predGSAT <- as.list(data.frame(GSAT_2300_samp, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predGSAT)){
@@ -625,7 +586,7 @@ write.csv(MEFF_GSAT_sdx,  "outputs/meff/GSAT_2300/nominalposterior_meff_sdx.csv"
 ########## MEFF for lapse_rate
 lapse_rate_samp <- sort(runif(length(GSAT_2300_nom), -12, -5))
 predlapse <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_samp, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predlapse)){
   names(predlapse)[l] <-  sub("_samp", "", names(predlapse)[l])
@@ -661,7 +622,7 @@ write.csv(MEFF_lapse_sdx,  "outputs/meff/lapse_rate/nominalposterior_meff_sdx.cs
 ########## MEFF for refreeze
 refreeze_samp <- sort(runif(length(GSAT_2300_nom), 0, 15))
 predrefreeze <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_samp, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                   heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                   heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predrefreeze)){
   names(predrefreeze)[l] <-  sub("_samp", "", names(predrefreeze)[l])
@@ -698,7 +659,7 @@ write.csv(MEFF_refreeze_sdx,  "outputs/meff/refreeze/nominalposterior_meff_sdx.c
 ########## MEFF for refreeze_frac
 refreeze_frac_samp <- sort(runif(length(GSAT_2300_nom), 0.2, 0.8))
 predfrac <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_samp, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predfrac)){
   names(predfrac)[l] <-  sub("_samp", "", names(predfrac)[l])
@@ -734,7 +695,7 @@ write.csv(MEFF_frac_sdx,  "outputs/meff/refreeze_frac/nominalposterior_meff_sdx.
 ########## MEFF for PDD_ice
 PDD_ice_samp <- sort(runif(length(GSAT_2300_nom), 4, 12))
 predice <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_samp, PDD_snow_nom, melt_param_nom, 
-                              heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                              heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predice)){
   names(predice)[l] <-  sub("_samp", "", names(predice)[l])
@@ -769,7 +730,7 @@ write.csv(MEFF_ice_sdx,  "outputs/meff/PDD_ice/nominalposterior_meff_sdx.csv", r
 ########## MEFF for PDD_snow
 PDD_snow_samp <- sort(runif(length(GSAT_2300_nom), 0, 6))
 predsnow <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_samp, melt_param_nom, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predsnow)){
   names(predsnow)[l] <-  sub("_samp", "", names(predsnow[l]))
@@ -804,7 +765,7 @@ write.csv(MEFF_snow_sdx,  "outputs/meff/PDD_snow/nominalposterior_meff_sdx.csv",
 ########## MEFF for heat_flux_PICO
 heat_flux_PICO_samp <- sort(runif(length(GSAT_2300_nom), 0.1*10**-5, 10*10**-5))
 predPICO <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                               heat_flux_PICO_samp, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_samp, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predPICO)){
   names(predPICO)[l] <-  sub("_samp", "", names(predPICO[l]))
@@ -839,7 +800,7 @@ write.csv(MEFF_PICO_sdx,  "outputs/meff/heat_flux_PICO/nominalposterior_meff_sdx
 ########## MEFF for heat_flux_Plume
 heat_flux_Plume_samp <- sort(runif(length(GSAT_2300_nom), 1*10**-4, 10*10**-4))
 predPlume <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_samp, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_samp, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predPlume)){
   names(predPlume)[l] <-  sub("_samp", "", names(predPlume[l]))
@@ -870,45 +831,10 @@ MEFF_Plume_lower <- MEFF_Plume_meanx - 2*MEFF_Plume_sdx
 write.csv(MEFF_Plume_meanx, "outputs/meff/heat_flux_plume/nominalposterior_meff_meanx.csv", row.names = FALSE)
 write.csv(MEFF_Plume_sdx,  "outputs/meff/heat_flux_plume/nominalposterior_meff_sdx.csv", row.names = FALSE)
 
-
-####### MEFF for heat_flux_Burgard
-heat_flux_Burgard_samp <- sort(runif(length(GSAT_2300_nom), 1*10**-4, 10*10**-4))
-predBurgard <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                  heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_samp, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
-## remove _samp and _nom or the predict function won't recognise the variables
-for ( l in 1:length(predBurgard)){
-  names(predBurgard)[l] <-  sub("_samp", "", names(predBurgard[l]))
-  names(predBurgard)[l] <-  sub("_nom", "", names(predBurgard[l]))
-}
-
-MEFF_Burgard <- lapply(1L:r, function(j) {predict(emu[[j]], predBurgard, type = "moments")}) 
-MEFF_Burgard_mean <- matrix( unlist(lapply(MEFF_Burgard, function(j) j[c('mean')])), ncol=r)
-MEFF_Burgard_sd <- matrix( unlist(lapply(MEFF_Burgard, function(j) j[c('sd')])), ncol=r)
-
-MEFF_Burgard_meanx <- sweep(MEFF_Burgard_mean %*% Vt, 2L, cc, "+")
-MEFF_Burgard_sdx <- t(sapply(1L:nrow(MEFF_Burgard_sd), function(i) {
-  sqrt(colSums((MEFF_Burgard_sd[i, ] * Vt)^2)) # n vector
-}))
-
-MEFF_Burgard_varx <- lapply(1L:nrow(MEFF_Burgard_sd), function(i) {
-  as.vector(crossprod(MEFF_Burgard_sd[i, ] * Vt)) 
-})
-MEFF_Burgard_varx <- do.call("cbind", MEFF_Burgard_varx) 
-dim(MEFF_Burgard_varx) <- c(n, n, nrow(MEFF_Burgard_sd))
-MEFF_Burgard_varx <- aperm(MEFF_Burgard_varx, c(3, 1, 2)) 
-
-#create upper and lower values (95% CI)
-MEFF_Burgard_upper <- MEFF_Burgard_meanx + 2*MEFF_Burgard_sdx
-MEFF_Burgard_lower <- MEFF_Burgard_meanx - 2*MEFF_Burgard_sdx
-
-# save this info
-write.csv(MEFF_Burgard_meanx, "outputs/meff/heat_flux_burgard/nominalposterior_meff_meanx.csv", row.names = FALSE)
-write.csv(MEFF_Burgard_sdx,  "outputs/meff/heat_flux_burgard/nominalposterior_meff_sdx.csv", row.names = FALSE)
-
 ########## MEFF for heat_flux_ISMIP6_nonlocal
 heat_flux_ISMIP6_nonlocal_samp <- sort(runif(length(GSAT_2300_nom), 1*10**4, 4*10**4))
 predISMIP6 <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                 heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_samp, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                 heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_samp, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predISMIP6)){
   names(predISMIP6)[l] <-  sub("_samp", "", names(predISMIP6[l]))
@@ -943,7 +869,7 @@ write.csv(MEFF_ISMIP6_sdx,  "outputs/meff/heat_flux_ISMIP6/nominalposterior_meff
 ########## MEFF for heat_flux_ISMIP6_nonlocal_slope
 heat_flux_ISMIP6_nonlocal_slope_samp <- sort(runif(length(GSAT_2300_nom), 1*10**6, 4*10**6))
 predISMIP6_slope <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                       heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_samp))
+                                       heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_samp))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predISMIP6_slope)){
   names(predISMIP6_slope)[l] <-  sub("_samp", "", names(predISMIP6_slope[l]))
@@ -980,7 +906,7 @@ write.csv(MEFF_ISMIP6_slope_sdx,  "outputs/meff/heat_flux_ISMIP6_slope/nominalpo
 ######## MEFF for simoc
 simoc_samp <- sample(X$simoc, length(GSAT_2300_nom), TRUE)
 predsimoc <- as.list(data.frame(GSAT_2300_nom, simoc_samp, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predsimoc)){
   names(predsimoc)[l] <-  sub("_samp", "", names(predsimoc)[l])
@@ -1012,7 +938,7 @@ MEFF_simoc_lower <- MEFF_simoc_meanx - 2*MEFF_simoc_sdx
 ########## MEFF for init_atmos
 init_atmos_samp <- sample(unique(X$init_atmos), length(GSAT_2300_nom), TRUE)
 predatmos <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_samp, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_nom, 
-                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                                heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predatmos)){
   names(predatmos)[l] <-  sub("_samp", "", names(predatmos)[l])
@@ -1043,7 +969,7 @@ MEFF_atmos_lower <- MEFF_atmos_meanx - 2*MEFF_atmos_sdx
 ########## MEFF for melt_param
 melt_param_samp <- sample(X$melt_param, length(GSAT_2300_nom), TRUE)
 predmelt <- as.list(data.frame(GSAT_2300_nom, simoc_nom, init_atmos_nom, lapse_rate_nom, refreeze_nom, refreeze_frac_nom, PDD_ice_nom, PDD_snow_nom, melt_param_samp, 
-                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_Burgard_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
+                               heat_flux_PICO_nom, heat_flux_Plume_nom, heat_flux_ISMIP6_nonlocal_nom, heat_flux_ISMIP6_nonlocal_slope_nom))
 ## remove _samp and _nom or the predict function won't recognise the variables
 for ( l in 1:length(predmelt)){
   names(predmelt)[l] <-  sub("_samp", "", names(predmelt)[l])
