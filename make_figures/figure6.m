@@ -187,3 +187,6 @@ ax(3).YLim = [-0.1,0.4];
 ax(1).YLim = [-1,4];
 %ax(3).YTick = -0.5:0.5:1;
 legend(ax(3), {"All scenarios", "SSP119","SSP126","SSP245","SSP370","SSP585"}, 'location', "NorthWest", "FontSize", 14);
+
+ax(2).YLim = [0, 0.3];
+ax(4).YLim = [0, 4];

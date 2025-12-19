@@ -18,14 +18,15 @@ scen_col = [34, 50, 81; %1-2.6
 
 %% Data
 sim_names = ["This study", "IPCC AR6", "Seroussi et al., 2024", "Turner et al., 2023", "Coulon et al., 2024", "Coulon et al., in review"];
-ub = [1.87, 2.20, 3.39;
+ub = [2.40, 2.71, 3.76;
     0.78,   nan,  3.13;
     0.3635, nan,  3.41;
     1.4,    2.0,  nan;
     1.20,   nan,  3.72;
     1.16,   nan,  4.32];
 
-lb = [0.44, 0.71, 1.52;
+
+lb = [-0.77, -0.48, 0.36;
     -0.14, nan, -0.28;
     -0.18,  nan,  0.38;
     0,     0.1,  nan;
@@ -63,7 +64,7 @@ ax(1).YTickLabel = flipud(sim_names');
 ax(2).YTickLabel = {};
 ax(3).YTickLabel = {};
 
-ax(1).XLim = [-0.5, 2];
-ax(2).XLim = [-0.5, 2.5];
+ax(1).XLim = [-1, 2.5];
+ax(2).XLim = [-1, 3];
 ax(3).XLim = [-0.5, 4.5];
 

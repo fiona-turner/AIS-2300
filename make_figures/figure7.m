@@ -1,57 +1,65 @@
-% Make figure 7 showing the main effects of SLR with GSAT at (a) 2100, (b) 2200,
-% and (c) 2300
+% make figure 7 of the manuscript, showing when the ensemble mean of a
+% given emissions scenario deviates more than 1 sd from another.
 %
-% 18/06/25, ATB (alex.bradley@kcl.ac.uk). MIT license.
+% 24/7/25, ATB. alex.bradley@kcl.ac.uk. MIT license
 %
-%
-clear
-%% Load in the data
-meff_GSAT_samples = readmatrix("../outputs/meff/GSAT_2300/samples.csv");
-years = readmatrix("../outputs/meff/GSAT_2300/years.csv");
-meff_GSAT_nominal_mean = readmatrix("../outputs/meff/GSAT_2300/nominal_meff_meanx.csv");
-meff_GSAT_nominal_std = readmatrix("../outputs/meff/GSAT_2300/nominal_meff_sdx.csv");
-meff_GSAT_nominalpost_mean = readmatrix("../outputs/meff/GSAT_2300/nominalposterior_meff_meanx.csv");
-meff_GSAT_nominalpost_std = readmatrix("../outputs/meff/GSAT_2300/nominalposterior_meff_sdx.csv");
+%% Preliminaries
+addpath('..')
+ssp = ["119", "126", "245", "370", "585"];
 
-% select the times
-tt = [2100, 2200, 2300];
+levu = [66,83, 95];
+levl = [33,17, 5]; %levels against which to assess
 
-%% Make the plot
-fig = figure(1);clf; hold on
-fig.Position(3:4) = [1250,300];
-pcol = [0.5, 0., 0.5];
+levu = [66,75, 83];
+levl = [33,25, 17]; %levels against which to assess
 
-for i = 1:3
-    ax(i) = subplot(1,3,i);
-    hold(ax(i), 'on');
-    box(ax(i), 'on');
-    ax(i).XLabel.String = '\Delta GSAT (C)';
-    ax(i).YLabel.String = 'SLE (m)';
-    ax(i).FontSize = 14;
-    grid(ax(i), 'on')
+tt = 1955:5:2300; %time output of the mcmc
 
-    %get the right row for nominal
-    [~,idx] = min(abs(years - tt(i)));
-    main = meff_GSAT_nominalpost_mean(:,idx);
-    err  = meff_GSAT_nominalpost_std(:,idx);
+%% Load in the trajectories
+t_emerge = nan(3,5,5);
+count = 1;
+for ii = 1:3
 
+for i = 1:length(ssp)
+    for j = 1:length(ssp)
+        mcmc_output_scen1 = readmatrix(strcat("../outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp",ssp(i),".csv"));
+        posterior_central_scen1 = prctile(mcmc_output_scen1,50 ,1);
+        posterior_erru_scen1    = prctile(mcmc_output_scen1,levu(ii),1); %sets the shaded area
+        posterior_errl_scen1    = prctile(mcmc_output_scen1,levl(ii),1); %sets the shaded area
 
-    xf = [meff_GSAT_samples;flip(meff_GSAT_samples)];
-    yf = [main-err; flip(main+err)];
-    fill(xf, yf, pcol, 'FaceAlpha',0.3, 'LineStyle','none');
-    plot(ax(i), meff_GSAT_samples, main, 'Color',pcol, 'LineWidth',1.5);
-    ax(i).XLim = [0,12];
+        mcmc_output_scen2 = readmatrix(strcat("../outputs/mcmc_output_data/mcmc_output_posteriortrajectories_ssp",ssp(j),".csv"));
+        posterior_central_scen2 = prctile(mcmc_output_scen2, 50,1);
+        posterior_erru_scen2    = prctile(mcmc_output_scen2,levu(ii),1); %sets the shaded area
+        posterior_errl_scen2    = prctile(mcmc_output_scen2,levl(ii),1); %sets the shaded area
 
-    %compute the linear slope between 0 and ~8 GSAT
-    [~,idx8c] = min(abs(meff_GSAT_samples - 8));
-    [~,idx0c] = min(abs(meff_GSAT_samples - 0));
-    slope = (main(idx8c) - main(idx0c))/(meff_GSAT_samples(idx8c) - meff_GSAT_samples(idx0c));
+        %find when/if they differ
+        idx = find((((posterior_central_scen1 < posterior_errl_scen2) | (posterior_central_scen1 > posterior_erru_scen2) | (posterior_central_scen2 > posterior_erru_scen1) | (posterior_central_scen2 < posterior_errl_scen1) ) & (tt > 2020)), 1, 'first');
 
-    plot([meff_GSAT_samples(idx0c),meff_GSAT_samples(idx8c)], [main(idx0c), main(idx8c)],'linewidth', 1.5, 'Color',pcol, 'LineStyle','--' )
+        if ~isempty(idx)
+            t_emerge(ii,i,j) = tt(idx);
 
-    fprintf('linear slope at time %.0f is %.4f \n', tt(i), slope)
-
+        end
+        count = count + 1
+    end
 end
-   
+end
 
 
+%% Make plot
+fig = figure(1); clf;
+fig.Position(3:4) = [1400, 380];
+t = tiledlayout(1,3);
+cmap =  flipud(cmocean('ice', 100));
+for i = 1:3
+    nexttile
+    p = heatmap( 1:5,1:5,flipud(squeeze(t_emerge(i,:,:)))); %flip so that we have ssps in the right order
+    %set(p, 'AlphaData', ~isnan(t_emerge));
+    xlabel("SSP");
+    ylabel("SSP");
+    p.XDisplayLabels = ssp;
+    p.YDisplayLabels = flipud(ssp');
+    p.ColorLimits = [2150, 2300];
+    p.Colormap =cmap;
+    p.MissingDataColor = 0.8*[1 1 1];   
+    p.FontSize = 12;
+end

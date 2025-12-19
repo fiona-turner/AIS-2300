@@ -6,6 +6,7 @@
 
 %% Preliminaries
 addpath('..')
+usetmp = 0; %use temporary filepath
 fig = figure(1); clf;
 
 positions = [0.06,0.13,0.55,0.8;
@@ -25,11 +26,17 @@ ax(2).XLabel.String = 'n_{MCMC}';
 ax(2).YLabel.String = 'SLR at 2300 (m)';
 
 %% Load in the data
-posterior = readmatrix("../outputs/mcmc_output_data/mcmc_output_posteriortrajectories.csv");
+if ~usetmp
+    posterior = readmatrix("../outputs/mcmc_output_data/mcmc_output_posteriortrajectories.csv");
+else
+    posterior = readmatrix("../outputs/mcmc_output_data/tmp/mcmc_output_posteriortrajectories.csv");
+
+end
+
 posterior_time = 1955:5:2300;
 
 %% Make panel (a)
-nmax = 1000:1000:length(posterior);
+nmax = 2000:2000:length(posterior);
 cmap = cmocean('thermal', length(nmax));
 
 %cmap = parula(length(nmax));
@@ -57,12 +64,12 @@ plot(ax(1), posterior_time, posterior_mean,'color',  cmap(in,:), 'LineWidth',2)
 end
 
 c = colorbar(ax(1));
-c.Ticks = nmax(2:2:end)./max(nmax);
+c.Ticks = nmax(5:5:end)./max(nmax);
 c.Position(1) = positions(1,3) + 0.065;
-c.Position(3) =0.01;
+c.Position(3) = 0.01;
 c.Colormap = cmap;
-c.Limits = [min(c.Ticks), max(c.Ticks)];
-c.TickLabels = compose('%.0f', nmax(2:2:end));
+%c.Limits = [min(c.Ticks), max(c.Ticks)];
+c.TickLabels = compose('%.0f', nmax(5:5:end));
 c.Label.String = 'n_{MCMC}';
 shg
 
@@ -71,6 +78,8 @@ plot(ax(2), nmax, slr_2300, 'k', 'LineWidth',2);
 
 
 %% Tidy stuff
-ax(1).YLim = 1e-3*[-10, 2000];
+ax(1).YLim = [0, 4];
+%ax(1).YLim = 1e-3*[-10, 2000];
 %ax(1).XLim = [1979, 2022];
 ax(2).YLim = ax(1).YLim;
+ax(2).XLim = [min(nmax), max(nmax)];

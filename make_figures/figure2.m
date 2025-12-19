@@ -34,9 +34,9 @@ simulations = readmatrix("../outputs/emulator_output_data/loocv_simulation_data.
 years       = 1955:5:2300;
 
 % remove the years row
-loocv_mean = loocv_mean(2:end, :);
-loocv_std  = loocv_std(2:end, :);
-simulations = simulations(2:end, :);
+% loocv_mean = loocv_mean(2:end, :);
+% loocv_std  = loocv_std(2:end, :);
+% simulations = simulations(2:end, :);
 
 
 sz = size(loocv_std);

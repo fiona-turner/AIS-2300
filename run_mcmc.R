@@ -10,6 +10,7 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
   # chain_length = length of markov chain we wish to sample
   # burn_in = number of samples we remove from beginning of chain
   
+  set.seed(123) # so the MCMC is consistent across runs
   
 #  #get a GSAT value according to scenario
 #  if(FAIR2){
@@ -53,11 +54,15 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
   PDD_ice_nom           <- 8
   PDD_snow_nom          <- 3
   melt_param_nom        <- unique(X$melt_param)[2]
-  heat_flux_Burgard_nom <- 5*10**-4
+  heat_flux_ISMIP6_local_nom <- 5*10**-4 * 31556926 #suggest alternative : (max(X$heat_flux_ISMIP6_local) + min(X$heat_flux_ISMIP6_local))/2
   heat_flux_ISMIP6_nonlocal_nom <- 1.45*10**4
   heat_flux_ISMIP6_nonlocal_slope_nom <- 2.06*10**6
   heat_flux_PICO_nom    <- 4*10**-5
   heat_flux_Plume_nom   <- 5.9*10**-4
+  sliding_exponent_nom  <- 2
+  overturning_PICO_nom  <- 2000000
+  
+  
   
   simoc <- unique(X$simoc)[1]
   init_atmos <- unique(X$init_atmos)[1]
@@ -67,16 +72,19 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
   PDD_ice <- PDD_ice_nom[1]
   PDD_snow <- PDD_snow_nom[1]
   melt_param <- unique(X$melt_param)[2]
-  heat_flux_Burgard = heat_flux_Burgard_nom[1]
+  heat_flux_ISMIP6_local = heat_flux_ISMIP6_local_nom[1]
   heat_flux_ISMIP6_nonlocal = heat_flux_ISMIP6_nonlocal_nom[1]
   heat_flux_ISMIP6_nonlocal_slope = heat_flux_ISMIP6_nonlocal_slope_nom[1]
   heat_flux_PICO = heat_flux_PICO_nom[1]
   heat_flux_Plume = heat_flux_Plume_nom[1]
+  sliding_exponent = sliding_exponent_nom[1]
+  overturning_PICO = overturning_PICO_nom[1]
+  
   GSAT_2300 = 2.68829 #mean from FAIR2
 
   #save variables in data frame as current state
-  current_state <- as.list(data.frame(GSAT_2300, simoc, init_atmos, lapse_rate, refreeze, refreeze_frac, PDD_ice, PDD_snow, melt_param, 
-                               heat_flux_PICO, heat_flux_Plume, heat_flux_Burgard, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope))
+  current_state <- as.list(data.frame(GSAT_2300, simoc, init_atmos, lapse_rate, refreeze, refreeze_frac, PDD_ice, PDD_snow, melt_param ,sliding_exponent,overturning_PICO, 
+                                      heat_flux_PICO, heat_flux_Plume, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope, heat_flux_ISMIP6_local))
   
   
   #function to create a proposed state, by taking a step away from current state.
@@ -126,11 +134,11 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
 #    }
     
 
-    heat_flux_Burgard = as.numeric(current_state['heat_flux_Burgard']) + rnorm(1, mean = 0, sd = step_size[6])
-#    if (heat_flux_Burgard  < 1*10**-4){
-#      heat_flux_Burgard  = 1*10**-4
-#    } else if (heat_flux_Burgard  > 10*10**-4){
-#      heat_flux_Burgard  = 10*10**-4
+    heat_flux_ISMIP6_local = as.numeric(current_state['heat_flux_ISMIP6_local']) + rnorm(1, mean = 0, sd = step_size[6])
+#    if (heat_flux_ISMIP6_local  < 1*10**-4){
+#      heat_flux_ISMIP6_local  = 1*10**-4
+#    } else if (heat_flux_ISMIP6_local  > 10*10**-4){
+#      heat_flux_ISMIP6_local  = 10*10**-4
 #    }
     
     heat_flux_ISMIP6_nonlocal = as.numeric(current_state['heat_flux_ISMIP6_nonlocal']) + rnorm(1, mean = 0, sd = step_size[7])
@@ -165,9 +173,18 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
     GSAT_2300 = current_state$GSAT_2300
     GSAT_2300 = as.numeric(current_state['GSAT_2300']) + rnorm(1, mean = 0, sd = step_size[11])
     
+    sliding_exponent = as.numeric(current_state['sliding_exponent']) + rnorm(1, mean = 0, sd = step_size[12])
+    overturning_PICO = as.numeric(current_state['overturning_PICO']) + rnorm(1, mean = 0, sd = step_size[13])
     
-    proposed_state <- as.list(data.frame(GSAT_2300, simoc, init_atmos, lapse_rate, refreeze, refreeze_frac, PDD_ice, PDD_snow, melt_param, 
-                                      heat_flux_PICO, heat_flux_Plume, heat_flux_Burgard, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope))
+    
+    
+ #   proposed_state <- as.list(data.frame(GSAT_2300, simoc, init_atmos, lapse_rate, refreeze, refreeze_frac, PDD_ice, PDD_snow, melt_param, 
+#                                      heat_flux_PICO, heat_flux_Plume, heat_flux_ISMIP6_local, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope,sliding_exponent,overturning_PICO))
+    
+    
+    proposed_state <- as.list(data.frame(GSAT_2300, simoc, init_atmos, lapse_rate, refreeze, refreeze_frac, PDD_ice, PDD_snow, melt_param ,sliding_exponent,overturning_PICO, 
+                                         heat_flux_PICO, heat_flux_Plume, heat_flux_ISMIP6_nonlocal, heat_flux_ISMIP6_nonlocal_slope, heat_flux_ISMIP6_local))
+    
     return(proposed_state)  
   }
   
@@ -205,16 +222,17 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
     isinbound_refreeze_frac                    = (proposed_state["refreeze_frac"] >= 0.2 & proposed_state["refreeze_frac"] <=  0.8)
     isinbound_PDD_ice                          = (proposed_state["PDD_ice"] >= 4 & proposed_state["PDD_ice"] <=  12)
     isinbound_PDD_snow                         = (proposed_state["PDD_snow"] >= 0 & proposed_state["PDD_snow"] <=  6)
-    isinbound_heat_flux_Burgard                = (proposed_state["heat_flux_Burgard"] >= 1*10**-4 & proposed_state["heat_flux_Burgard"] <=  10*10**-4)
+    isinbound_heat_flux_ISMIP6_local           = (proposed_state["heat_flux_ISMIP6_local"] >= 1*10**-4 * 31556926 & proposed_state["heat_flux_ISMIP6_local"] <=  10*10**-4 * 31556926)
     isinbound_heat_flux_ISMIP6_nonlocal        = (proposed_state["heat_flux_ISMIP6_nonlocal"] >= 1*10**4 & proposed_state["heat_flux_ISMIP6_nonlocal"] <= 4*10**4)
     isinbound_heat_flux_ISMIP6_nonlocal_slope  = (proposed_state["heat_flux_ISMIP6_nonlocal_slope"] >= 1*10**6 & proposed_state["heat_flux_ISMIP6_nonlocal_slope"] <=  4*10**6)
     isinbound_heat_flux_PICO                   = (proposed_state["heat_flux_PICO"] >= 0.1*10**-5 & proposed_state["heat_flux_PICO"] <=   10*10**-5)
     isinbound_heat_flux_Plume                  = (proposed_state["heat_flux_Plume"] >= 1*10**-4 & proposed_state["heat_flux_Plume"] <=  10*10**-4)
-    
+    isinbound_sliding_exponent                 = (proposed_state["sliding_exponent"] >= 0.5 & proposed_state["sliding_exponent"] <=  4)
+    isinbound_overturning_PICO                 = (proposed_state["overturning_PICO"] >= 5 * 100000 & proposed_state["overturning_PICO"] <=  5 * 1000000)
     
     isinbound <- c(isinbound_GSAT,isinbound_lapse_rate, isinbound_refreeze,isinbound_refreeze_frac,isinbound_PDD_ice,isinbound_PDD_snow,
-                   isinbound_heat_flux_Burgard,isinbound_heat_flux_ISMIP6_nonlocal,isinbound_heat_flux_ISMIP6_nonlocal_slope,
-                   isinbound_heat_flux_PICO,isinbound_heat_flux_Plume)
+                   isinbound_heat_flux_ISMIP6_local,isinbound_heat_flux_ISMIP6_nonlocal,isinbound_heat_flux_ISMIP6_nonlocal_slope,
+                   isinbound_heat_flux_PICO,isinbound_heat_flux_Plume,isinbound_sliding_exponent,isinbound_overturning_PICO)
     #print(isinbound)
   
     all_within_bounds <- all(isinbound)
@@ -267,7 +285,9 @@ mh_calib <- function(obs, obs_sig, fac, step_size, chain_length, burn_in, bounds
   slr_trajectories_ssp370 <- data.frame(matrix(vector(), chain_length, 70))
   slr_trajectories_ssp585 <- data.frame(matrix(vector(), chain_length, 70))
   
-  colnames(samples) <- colnames(X)
+  colnames(samples) <- colnames(X) 
+
+  
   accept <- c()
   
   # load the FAIR data

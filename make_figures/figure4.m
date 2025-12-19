@@ -89,7 +89,8 @@ posterior_time = 1955:5:2300;
 
 nmax = length(posterior);
 %nmax = 2000;
-posterior = posterior(1:nmax, :); %remove final rows
+nmin = 1;
+posterior = posterior(nmin:nmax, :); %remove final rows
 % rebase
 
 [~,idx] = min(abs(posterior_time - 1979)); %this will be 1980 bc outputs in 5 years
